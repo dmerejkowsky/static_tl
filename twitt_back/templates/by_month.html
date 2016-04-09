@@ -14,9 +14,11 @@
 
   {% for tweet in tweets %}
 
-  <h2 id="{{ loop.index }}">{{ tweet.date }}
+  {# using revindex so that they don't change when
+     there's a new tweet #}
+  <h2 id="{{ loop.revindex }}">{{ tweet.date }}
     {% if site_url %}
-    <a href="{{ site_url }}/{{ year }}-{{ month }}.html#{{ loop.index }}">
+    <a href="{{ site_url }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
     ¶
     </a>
     {% endif %}
