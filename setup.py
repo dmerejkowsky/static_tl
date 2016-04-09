@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(name="static_tl",
-      version="0.1",
+      version="0.2",
       description="Take control of your tweets",
       url="https://github.com/dmerejkowsy/static_tl",
       author="Dimitri Merejkowsky",
