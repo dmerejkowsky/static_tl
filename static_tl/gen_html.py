@@ -1,6 +1,6 @@
 """ Generate a static html page containing all the tweets.
 
-Assume `twitt-back get` has been called
+Assume `static_tl get` has been called
 
 """
 
@@ -11,7 +11,7 @@ import json
 import arrow
 import jinja2
 
-import twitt_back.config
+import static_tl.config
 
 JSON_FILENAME_RE = re.compile(r"""
     tweets-
@@ -63,7 +63,7 @@ def fix_tweets(tweets):
 
 def gen_from_template(out, template_name, context):
     print("gen", out)
-    loader = jinja2.PackageLoader("twitt_back", "templates")
+    loader = jinja2.PackageLoader("static_tl", "templates")
     env = jinja2.Environment(loader=loader)
     template = env.get_template(template_name)
     to_write = template.render(**context)
@@ -109,7 +109,7 @@ def gen_html(site_url=None):
 
 
 def main():
-    site_url = twitt_back.config.get_config().get("site_url")
+    site_url = static_tl.config.get_config().get("site_url")
     if not site_url:
         print("Warinng: site_url not set, permalinks won't work")
     gen_html(site_url=site_url)

@@ -1,4 +1,4 @@
-twitt-back
+static_tl
 ==========
 
 What is it?
@@ -15,45 +15,49 @@ In a way, it also makes it possible to:
 Show me!
 --------
 
-Here's an example of ``twitt-back`` in action:
+Here's an example of ``static_tl`` in action:
 
 `http://dmerej.info/tweets <http://dmerej.info/tweets>`_
 
 How to use it ?
 ---------------
 
-* Install Python3 and then install twitt-back with ``pip``
+* Install Python3 and then install static_tl with ``pip``
 
-* Edit ``~/.config/twitt-back.cfg`` to have something like::
+* Create an app on ``http://apps.twitter.com``
+
+* Edit ``~/.config/static_tl.cfg`` to have something like::
 
 
-    [twitt-back]
+    [static_tl]
     user = <user>
-    api_secret = <secret api>
-    token_secret = <secret token>
+    api_key = <Consumer Key>
+    api_secret = <Consumer Secret>
+    token = <Access Token>
+    token_secret = <Access Token Secret>
 
 * Then run::
 
-    twitt-back get
+    static-tl get
 
 This will generate ``some .json`` files with your recent tweets:
 
 For instance, if your run it on 2016 October 10, you'll get two
 files:
 
-* ``tweets-<user>-2016-09.json`` (all the tweets from September)
-* ``tweets-<user>-2016-10.json`` (all the tweets from October so far)
+* ``tweets-2016-09.json`` (all the tweets from September)
+* ``tweets-2016-10.json`` (all the tweets from October so far)
 
 Of course, the last file will be overridden when you'll re-run the
 script in November.
 
 So keep these ``.json`` somewhere safe, you'll need them later,
-and remember to re-run ``twitt-back get`` at least once a month.
+and remember to re-run ``static-tl get`` at least once a month.
 
 * Then, when you are ready you can generate a completely static
   copy of your TL with::
 
-    twitt-back gen
+    static-tl gen
 
 (By static, we mean that it's possible to upload those html files wherever
 you want so it's extremely easy to publish your new TL on the web)
@@ -67,5 +71,5 @@ Permalinks
 If you want to generate permalinks, simply set ``site_url`` in the config
 file::
 
-    [twitt-back]
+    [static_tl]
     site_url = http://example.com/tweets

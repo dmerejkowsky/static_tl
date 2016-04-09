@@ -24,7 +24,7 @@ import os
 import arrow
 import twitter
 
-import twitt_back.config
+import static_tl.config
 
 MAX_TWEETS_IN_TWO_MONTHS = 30 * 100 * 2 # One hundred per day !
 
@@ -34,7 +34,7 @@ def get_credentials(config):
     """
     # TODO: Use keyring instead ? But it requires having
     # gnome-keyring or ksecretservice running ...
-    config = twitt_back.config.get_config()
+    config = static_tl.config.get_config()
     keys = ["token", "token_secret",
             "api_key", "api_secret"]
     return (config[key] for key in keys)
@@ -73,7 +73,7 @@ def get_tweets_since_last_month(twitter_api, with_replies=False):
     ]
 
     """
-    user = twitt_back.config.get_config()["user"]
+    user = static_tl.config.get_config()["user"]
     (now, a_month_ago) = last_two_months()
     res = [[now, list()], [a_month_ago, list()]]
     tweets = twitter_api.statuses.user_timeline(
@@ -96,10 +96,10 @@ def dump(tweets):
         output = "tweets-%i-%02i.json" % (date.year, date.month)
         with open(output, "w") as fp:
             json.dump(tweets_this_date, fp, indent=2)
-            print("Tweets backed up to", output)
+            print("Tweets written to", output)
 
 def main():
-    config = twitt_back.config.get_config()
+    config = static_tl.config.get_config()
     with_replies = config.getboolean("with_replies", fallback=False)
     if with_replies:
         print("Getting tweets with replies")

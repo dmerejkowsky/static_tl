@@ -2,17 +2,17 @@
 
 Two commands to run, every month:
 
-    twitt-back get    # stores your latest tweets in .json files
-    twitt-back gen    # gen a static html web site using the generated .json files
+    static_tl get    # stores your latest tweets in .json files
+    static_tl gen    # gen a static html web site using the generated .json files
 
 """
 
-USAGE = """ Usage: twitt-back [-h] {help,get,gen} """
+USAGE = """ Usage: static_tl [-h] {help,get,gen} """
 
 import sys
 
-from twitt_back.get_tweets import main as main_get
-from twitt_back.gen_html import main as main_gen
+from static_tl.get_tweets import main as main_get
+from static_tl.gen_html import main as main_gen
 
 def main():
     if len(sys.argv) < 2:

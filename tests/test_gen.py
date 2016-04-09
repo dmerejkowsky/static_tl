@@ -1,4 +1,4 @@
-from twitt_back.gen_html import *
+from static_tl.gen_html import *
 
 def test_fix_urls():
     expanded_url = "http://example.com"

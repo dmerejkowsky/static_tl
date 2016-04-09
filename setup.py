@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-setup(name="twitt-back",
+setup(name="static_tl",
       version="0.1",
       description="Take control of your tweets",
       url="http://dmerej.info/tweets/",
@@ -12,7 +12,7 @@ setup(name="twitt-back",
       license="BSD",
       entry_points = {
         "console_scripts" : [
-            "twitt-back   = twitt_back.main:main"
+            "static-tl   = static_tl.main:main"
         ]
       },
       classifiers=[
