@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(name="static_tl",
       version="0.1",
       description="Take control of your tweets",
-      url="http://dmerej.info/tweets/",
+      url="https://github.com/dmerejkowsy/static_tl",
       author="Dimitri Merejkowsky",
       author_email="d.merej@gmail",
       packages=find_packages(),
