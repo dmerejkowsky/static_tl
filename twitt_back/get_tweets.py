@@ -26,20 +26,18 @@ import twitter
 
 import twitt_back.config
 
-API_KEY = "7kiffT1EnER5sQGz9WMepBzjB"
-ACCESS_TOKEN = "468504845-v2ThgjVsjFjOsFILOVykyW4CF664g4OXXx2TwYlA"
-MAX_TWEETS_IN_TWO_MONTHS = 30 * 100 * 2# One hundred per day !
+MAX_TWEETS_IN_TWO_MONTHS = 30 * 100 * 2 # One hundred per day !
 
-
-def get_secrets(config):
-    """ Get the secret token and the api secret  from
-    a config file (in clear text)
+def get_credentials(config):
+    """ Get the 4 values required for twitter auth
 
     """
     # TODO: Use keyring instead ? But it requires having
     # gnome-keyring or ksecretservice running ...
     config = twitt_back.config.get_config()
-    return (config["token_secret"], config["api_secret"])
+    keys = ["token", "token_secret",
+            "api_key", "api_secret"]
+    return (config[key] for key in keys)
 
 def last_two_months():
     now = arrow.now()
@@ -107,9 +105,8 @@ def main():
         print("Getting tweets with replies")
     else:
         print("Getting tweets without replies")
-    token_secret, api_secret = get_secrets(config)
-    auth = twitter.OAuth(ACCESS_TOKEN, token_secret,
-        API_KEY, api_secret)
+    credentials = get_credentials(config)
+    auth = twitter.OAuth(*credentials)
     api = twitter.Twitter(auth=auth)
     tweets_since_last_month = get_tweets_since_last_month(api,
         with_replies=with_replies)
