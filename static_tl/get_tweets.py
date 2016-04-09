@@ -49,9 +49,10 @@ def set_date(tweet):
     """ A a simple 'timestamp' field to the tweet
     object, and return the date as an arrow object
     """
-    # note : requires https://github.com/crsmithdev/arrow/pull/321
     created_at = tweet['created_at']
-    date = arrow.get(created_at, 'ddd MMM DD HH:mm:ss Z YYYY')
+    # note : requires https://github.com/crsmithdev/arrow/pull/321
+    # date = arrow.get(created_at, 'ddd MMM DD HH:mm:ss Z YYYY')
+    date = arrow.Arrow.strptime(created_at, "%a %b %d %H:%M:%S %z %Y")
     tweet["timestamp"] = date.timestamp
     return date
 

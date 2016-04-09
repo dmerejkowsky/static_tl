@@ -1,11 +1,6 @@
 static_tl
 ==========
 
-.. warning:: Right now static_tl requires a custom version of the
-             ``arrow`` library to work. See
-             `Issue #1 <https://github.com/dmerejkowsky/static_tl/issues/1>`_
-             for more info
-
 What is it?
 -----------
 
