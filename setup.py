@@ -3,10 +3,10 @@ from setuptools import setup, find_packages
 
 setup(name="static_tl",
       version="0.2",
-      description="Take control of your tweets",
+      description="Generate a static HTML website from your twitter time line",
       url="https://github.com/dmerejkowsy/static_tl",
       author="Dimitri Merejkowsky",
-      author_email="d.merej@gmail",
+      author_email="d.merej@gmail.com",
       packages=find_packages(),
       package_data={
           "static_tl" : ["templates/*"],
