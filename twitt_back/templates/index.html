@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+  <meta charset="utf-8">
+  <title>All tweets </title>
+
+<body>
+  <h1>Tweets</h1>
+
+  <ul>
+  {% for page in pages %}
+  {% set metadata = page["metadata"] %}
+  <li>
+    <a href="{{ page.href }}">{{ metadata.year }}-{{ metadata.month }}</a>
+  </li>
+  {% endfor %}
+  </ul>
+
+
+<p>
+Generated with <tt>twitt-back</tt>
+</p>
+
+</body>
+
+</html>
