@@ -40,7 +40,7 @@ How to use it ?
 
     static-tl get
 
-This will generate ``some .json`` files with your recent tweets:
+This will generate some ``tweets-<year>-<month>.json`` files with your recent tweets.
 
 For instance, if your run it on 2016 October 10, you'll get two
 files:
