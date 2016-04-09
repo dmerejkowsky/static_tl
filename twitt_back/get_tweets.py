@@ -57,7 +57,16 @@ def set_date(tweet):
     tweet["timestamp"] = date.timestamp
     return date
 
-def get_tweets_since_last_month(twitter_api):
+def is_reply(tweet):
+    """ Assume a tweet is a reply if in_reply_to_screen_name
+    or in_reply_to_status_id are not None
+
+    """
+    return tweet.get("in_reply_to_screen_name") or \
+            tweet.get("in_reply_to_status_id")
+
+
+def get_tweets_since_last_month(twitter_api, with_replies=False):
     """ Return two lists of two lists of two elements:
 
     [
@@ -72,6 +81,9 @@ def get_tweets_since_last_month(twitter_api):
     tweets = twitter_api.statuses.user_timeline(
         screen_name=user, count=MAX_TWEETS_IN_TWO_MONTHS)
     for tweet in tweets:
+        if not with_replies:
+            if is_reply(tweet):
+                continue
         date = set_date(tweet)
         if date.month == now.month:
             res[0][1].append(tweet)
@@ -90,11 +102,17 @@ def dump(tweets):
 
 def main():
     config = twitt_back.config.get_config()
+    with_replies = config.getboolean("with_replies", fallback=False)
+    if with_replies:
+        print("Getting tweets with replies")
+    else:
+        print("Getting tweets without replies")
     token_secret, api_secret = get_secrets(config)
     auth = twitter.OAuth(ACCESS_TOKEN, token_secret,
         API_KEY, api_secret)
     api = twitter.Twitter(auth=auth)
-    tweets_since_last_month = get_tweets_since_last_month(api)
+    tweets_since_last_month = get_tweets_since_last_month(api,
+        with_replies=with_replies)
     dump(tweets_since_last_month)
 
 if __name__ == "__main__":
