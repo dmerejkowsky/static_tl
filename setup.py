@@ -8,6 +8,9 @@ setup(name="static_tl",
       author="Dimitri Merejkowsky",
       author_email="d.merej@gmail",
       packages=find_packages(),
+      package_data={
+          "static_tl" : ["templates/*"],
+      },
       install_requires=["arrow", "jinja2", "twitter"],
       license="BSD",
       entry_points = {
