@@ -18,7 +18,6 @@ run gen_htlm() with all your .json data ...
 """
 
 import argparse
-import configparser
 import json
 import os
 
@@ -29,11 +28,6 @@ API_KEY = "7kiffT1EnER5sQGz9WMepBzjB"
 ACCESS_TOKEN = "468504845-v2ThgjVsjFjOsFILOVykyW4CF664g4OXXx2TwYlA"
 MAX_TWEETS_IN_TWO_MONTHS = 30 * 100 * 2# One hundred per day !
 
-def get_config():
-    cfg_path = os.path.expanduser("~/.config/twitt-back.cfg")
-    parser = configparser.ConfigParser()
-    parser.read(cfg_path)
-    return parser["twitt-back"]
 
 def get_secrets():
     """ Get the secret token and the api secret  from

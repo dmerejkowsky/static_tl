@@ -14,8 +14,13 @@
 
   {% for tweet in tweets %}
 
-  <h2>{{ tweet.date }}</h2>
-
+  <h2 id="{{ loop.index }}">{{ tweet.date }}
+    {% if site_url %}
+    <a href="{{ site_url }}/{{ year }}-{{ month }}.html#{{ loop.index }}">
+    ¶
+    </a>
+    {% endif %}
+  </h2>
   <p>
 {{ tweet.text_as_html }}
   </p>

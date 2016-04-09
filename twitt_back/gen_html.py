@@ -11,6 +11,7 @@ import json
 import arrow
 import jinja2
 
+import twitt_back.config
 
 JSON_FILENAME_RE = re.compile(r"""
     tweets-
@@ -90,7 +91,7 @@ def gen_index(all_pages):
     gen_from_template(out, "index.html", context)
     return out
 
-def gen_html():
+def gen_html(site_url=None):
     if not os.path.exists("html"):
         os.mkdir("html")
     all_pages = list()
@@ -98,6 +99,7 @@ def gen_html():
         match = re.match(JSON_FILENAME_RE, filename)
         if match:
             metadata = match.groupdict()
+            metadata["site_url"] = site_url
             page_name = gen_page(filename, metadata)
             page = dict()
             page["href"] = page_name
@@ -107,7 +109,10 @@ def gen_html():
 
 
 def main():
-    gen_html()
+    site_url = twitt_back.config.get_config().get("site_url")
+    if not site_url:
+        print("Warinng: site_url not set, permalinks won't work")
+    gen_html(site_url=site_url)
     print("Site generated in html/")
 
 if __name__ == "__main__":

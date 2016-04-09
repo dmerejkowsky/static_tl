@@ -5,7 +5,7 @@ What is it?
 -----------
 
 It' a tool that makes sure your TL won't be gone for ever if for some
-reason your twitter decides to no longer play nice.
+reason twitter decides to no longer play nice.
 
 In a way, it also makes it possible to:
 
@@ -17,7 +17,7 @@ Show me!
 
 Here's an example of ``twitt-back`` in action:
 
-``http://dmerej.info/tweets``
+`http://dmerej.info/tweets <http://dmerej.info/tweets>`_
 
 How to use it ?
 ---------------
@@ -27,10 +27,10 @@ How to use it ?
 * Edit ``~/.config/twitt-back.cfg`` to have something like::
 
 
-  [twitt-back]
-  user = <user>
-  api_secret = <secret api>
-  token_secret = <secret token>
+    [twitt-back]
+    user = <user>
+    api_secret = <secret api>
+    token_secret = <secret token>
 
 * Then run::
 
@@ -60,3 +60,12 @@ you want so it's extremely easy to publish your new TL on the web)
 
 The best part is that since you have a copy of all your tweets as ``.json`` files,
 it's easy to edit them :)
+
+Permalinks
+----------
+
+If you want to generate permalinks, simply set ``site_url`` in the config
+file::
+
+    [twitt-back]
+    site_url = http://example.com/tweets
