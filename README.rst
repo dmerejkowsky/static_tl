@@ -1,6 +1,9 @@
 static_tl
 ==========
 
+.. image:: http://img.shields.io/pypi/v/static_tl.png
+  :target: https://pypi.python.org/pypi/static_tl
+
 What is it?
 -----------
 
