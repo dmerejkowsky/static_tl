@@ -91,7 +91,7 @@ def gen_index(all_pages):
     gen_from_template(out, "index.html", context)
     return out
 
-def gen_html(site_url=None):
+def gen_html(user, site_url=None):
     if not os.path.exists("html"):
         os.mkdir("html")
     all_pages = list()
@@ -100,6 +100,7 @@ def gen_html(site_url=None):
         if match:
             metadata = match.groupdict()
             metadata["site_url"] = site_url
+            metadata["user" ] = user
             page_name = gen_page(filename, metadata)
             page = dict()
             page["href"] = page_name
@@ -109,10 +110,11 @@ def gen_html(site_url=None):
 
 
 def main():
+    user = static_tl.config.get_config()["user"]
     site_url = static_tl.config.get_config().get("site_url")
     if not site_url:
         print("Warinng: site_url not set, permalinks won't work")
-    gen_html(site_url=site_url)
+    gen_html(user, site_url=site_url)
     print("Site generated in html/")
 
 if __name__ == "__main__":
