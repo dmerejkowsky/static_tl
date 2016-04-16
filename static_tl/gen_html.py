@@ -1,24 +1,25 @@
-""" Generate a static html page containing all the tweets.
+""" Generate a static html site containing all the tweets.
 
 Assume `static_tl get` has been called
 
 """
 
 import os
-import re
-import json
 
 import arrow
 import jinja2
 
 import static_tl.config
+import static_tl.storage
 
-JSON_FILENAME_RE = re.compile(r"""
-    tweets-
-    (?P<year>(\d{4}))-       # Year is four digits
-    (?P<month>(\d{2}))       # Month is two digits (01-12)
-    \.json                   # Extension
-""", re.VERBOSE)
+def get_month_short_name(month_number):
+    """
+    >>> get_month_short_name(4)
+    'Apr"
+
+    """
+    date = arrow.Arrow(year=2000, day=1, month=int(month_number))
+    return date.strftime("%b")
 
 def gen_text_as_html(tweet):
     """ Take the raw text of the tweet and make it better """
@@ -70,17 +71,14 @@ def gen_from_template(out, template_name, context):
     with open(out, "w") as fp:
         fp.write(to_write)
 
-def gen_page(json_file, metadata):
+def gen_page(tweets, metadata):
     context = metadata
     month_number =  metadata["month"]
+    context["month_short_name"] = get_month_short_name(month_number)
     page_name = "%s-%s.html" % (metadata["year"], month_number)
     out = "html/%s" % page_name
-    with open(json_file, "r") as fp:
-        tweets =  json.load(fp)
     fix_tweets(tweets)
     context["tweets"] = tweets
-    date = arrow.Arrow(year=2000, day=1, month=int(month_number))
-    context["month_short_name"] = date.strftime("%b")
     gen_from_template(out, "by_month.html", context)
     return page_name
 
@@ -94,18 +92,16 @@ def gen_index(all_pages):
 def gen_html(user, site_url=None):
     if not os.path.exists("html"):
         os.mkdir("html")
+
     all_pages = list()
-    for filename in sorted(os.listdir("."), reverse=True):
-        match = re.match(JSON_FILENAME_RE, filename)
-        if match:
-            metadata = match.groupdict()
-            metadata["site_url"] = site_url
-            metadata["user" ] = user
-            page_name = gen_page(filename, metadata)
-            page = dict()
-            page["href"] = page_name
-            page["metadata"] = metadata
-            all_pages.append(page)
+    for tweets, metadata in static_tl.storage.get_tweets():
+        metadata["site_url"] = site_url
+        metadata["user" ] = user
+        page_name = gen_page(tweets, metadata)
+        page = dict()
+        page["href"] = page_name
+        page["metadata"] = metadata
+        all_pages.append(page)
     gen_index(all_pages)
 
 

@@ -7,12 +7,12 @@ Two commands to run, every month:
 
 """
 
-USAGE = """ Usage: static_tl [-h] {help,get,gen} """
 
 import sys
 
 from static_tl.get_tweets import main as main_get
-from static_tl.gen_html import main as main_gen
+from static_tl.gen_html import main as main_html
+from static_tl.gen_feed import main as main_feed
 
 def main():
     if len(sys.argv) < 2:
@@ -31,5 +31,6 @@ def main():
         sys.exit(0)
 
     if sys.argv[1] == "gen":
-        main_gen()
+        main_html()
+        main_feed()
         sys.exit(0)

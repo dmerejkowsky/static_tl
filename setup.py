@@ -11,7 +11,7 @@ setup(name="static_tl",
       package_data={
           "static_tl" : ["templates/*"],
       },
-      install_requires=["arrow", "jinja2", "twitter"],
+      install_requires=["arrow", "feedgen", "jinja2", "twitter"],
       license="BSD",
       entry_points = {
         "console_scripts" : [
