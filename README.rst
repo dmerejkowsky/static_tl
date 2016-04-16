@@ -25,14 +25,14 @@ Here's an example of ``static_tl`` in action:
 How to use it ?
 ---------------
 
-* Install Python3 and then install static_tl with ``pip``
+* Install Python3 and then install ``static_tl`` with ``pip``
 
 * Create an app on ``http://apps.twitter.com``
 
 * Edit ``~/.config/static_tl.toml`` to have something like:
 
   .. code-block:: ini
-  
+
     [auth]
     api_key = "<Consumer Key>"
     api_secret = "<Consumer Secret>"
@@ -64,7 +64,7 @@ files:
 Of course, the last file will be overridden when you'll re-run the
 script in November.
 
-So keep the ``json`` foldre somewhere safe, you'll need them later,
+So keep the ``json`` folder somewhere safe, you'll need them later,
 and remember to re-run ``static-tl get`` at least once a month.
 
 * Then, when you are ready you can generate a completely static
