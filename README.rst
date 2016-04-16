@@ -29,9 +29,10 @@ How to use it ?
 
 * Create an app on ``http://apps.twitter.com``
 
-* Edit ``~/.config/static_tl.toml`` to have something like::
+* Edit ``~/.config/static_tl.toml`` to have something like:
 
-
+  .. code-block:: ini
+  
     [auth]
     api_key = "<Consumer Key>"
     api_secret = "<Consumer Secret>"
