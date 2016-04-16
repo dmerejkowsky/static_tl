@@ -84,3 +84,14 @@ If you want to generate permalinks, simply add ``site_url`` at the
 top of the ``.toml`` file::
 
     site_url = http://example.com/tweets
+
+Tweaking the output
+--------------------
+
+Customization can be done by simply editing the ``Jinja`` templates in ``templates``.
+
+From the template you have access to all the fields returned by the official
+twitter API.
+
+You can also put any file in the ``static`` folder : they will get copied into
+the ``html`` folder : useful for images, ``css`` files and the like.
