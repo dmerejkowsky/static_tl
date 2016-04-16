@@ -5,12 +5,41 @@ Assume `static_tl get` has been called
 """
 
 import os
+import shutil
 
 import arrow
+import feedgen.feed
 import jinja2
 
 import static_tl.config
 import static_tl.storage
+
+def is_reply(tweet):
+    """ Assume a tweet is a reply if in_reply_to_screen_name
+    or in_reply_to_status_id are not None
+
+    """
+    return tweet.get("in_reply_to_screen_name") or \
+            tweet.get("in_reply_to_status_id")
+
+def filter_tweets(user, tweets):
+    """ Return a generator filtering tweets the user does not
+    want to keep
+
+    """
+    config = static_tl.config.get_config()
+    user_config = config["users"][0][user]
+    with_replies = user_config.get("with_replies", False)
+
+    if with_replies:
+        return tweets
+
+    res = list()
+    for tweet in tweets:
+        if not(is_reply(tweet)):
+            res.append(tweet)
+    return res
+
 
 def get_month_short_name(month_number):
     """
@@ -63,7 +92,7 @@ def fix_tweets(tweets):
         gen_text_as_html(tweet)
 
 def gen_from_template(out, template_name, context):
-    print("gen", out)
+    print("Generating", out)
     loader = jinja2.PackageLoader("static_tl", "templates")
     env = jinja2.Environment(loader=loader)
     template = env.get_template(template_name)
@@ -71,47 +100,106 @@ def gen_from_template(out, template_name, context):
     with open(out, "w") as fp:
         fp.write(to_write)
 
-def gen_page(tweets, metadata):
+def gen_user_page(user, tweets, metadata):
     context = metadata
     month_number =  metadata["month"]
     context["month_short_name"] = get_month_short_name(month_number)
     page_name = "%s-%s.html" % (metadata["year"], month_number)
-    out = "html/%s" % page_name
+    out = "html/%s/%s" % (user, page_name)
+    tweets = filter_tweets(user, tweets)
     fix_tweets(tweets)
     context["tweets"] = tweets
     gen_from_template(out, "by_month.html", context)
     return page_name
 
-def gen_index(all_pages):
-    out = "html/index.html"
+def gen_user_index(user, all_pages):
+    out = "html/%s/index.html" % user
     context = dict()
     context["pages"] = all_pages
-    gen_from_template(out, "index.html", context)
+    context["user"] = user
+    gen_from_template(out, "user_index.html", context)
     return out
 
-def gen_html(user, site_url=None):
-    if not os.path.exists("html"):
-        os.mkdir("html")
+def gen_user_pages(user, site_url=None):
+    output_dir = os.path.join("html", user)
+    try:
+        os.makedirs(output_dir)
+    except FileExistsError:
+        pass
 
     all_pages = list()
-    for tweets, metadata in static_tl.storage.get_tweets():
+    for tweets, metadata in static_tl.storage.get_tweets(user=user):
         metadata["site_url"] = site_url
-        metadata["user" ] = user
-        page_name = gen_page(tweets, metadata)
+        page_name = gen_user_page(user, tweets, metadata)
         page = dict()
         page["href"] = page_name
         page["metadata"] = metadata
         all_pages.append(page)
-    gen_index(all_pages)
+    gen_user_index(user, all_pages)
+    gen_user_feed(user, site_url=site_url)
 
+
+def gen_index(users=None):
+    output = os.path.join("html", "index.html")
+    gen_from_template(output, "index.html",
+            { "users" : users })
+
+def gen_user_feed(user, site_url=None):
+    output = "html/%s/feed.atom" % user
+    print("Generating", output)
+    feed_generator = feedgen.feed.FeedGenerator()
+    title = "Tweets from %s" % user
+    description = title
+    feed_generator.title(title)
+    feed_generator.description(description)
+    feed_alternate_url = "%s/%s" % (site_url, user)
+    feed_self_url = "%s/%s.atom" % (site_url, user)
+    feed_generator.link(rel="alternate", href=feed_alternate_url,
+            type="text/html")
+    feed_generator.link(rel="self", href=feed_self_url,
+            type="application/atom+xml")
+
+    feed_generator.id(feed_self_url)
+    for tweets, metadata in static_tl.storage.get_tweets(user=user):
+        year = metadata["year"]
+        month = metadata["month"]
+        index = len(tweets)
+        for tweet in tweets:
+            date = arrow.get(tweet["timestamp"])
+            date_str = date.for_json()
+            entry = feed_generator.add_entry()
+            entry.pubdate(date_str)
+            permalink = "%s/%s/%s-%s.html#%i" % (
+                    site_url, user, year, month, index)
+            entry_id = "%s %s/%s #%i" % (user, year, month, index)
+            entry.title(entry_id)
+            entry.link(href=permalink)
+            entry.id(entry_id)
+            index -= 1
+    feed_generator.atom_file(output, pretty=True)
+
+def copy_static():
+    outdir = "html"
+    try:
+        os.makedirs(outdir)
+    except FileExistsError:
+        pass
+    static_contents = os.listdir("static_tl/static")
+    for content in static_contents:
+        src = os.path.join("static_tl/static", content)
+        dest = os.path.join(outdir, content)
+        shutil.copy(src, dest)
 
 def main():
-    user = static_tl.config.get_config()["user"]
-    site_url = static_tl.config.get_config().get("site_url")
+    config = static_tl.config.get_config()
+    site_url = config.get("site_url")
     if not site_url:
         print("Warinng: site_url not set, permalinks won't work")
-    gen_html(user, site_url=site_url)
-    print("Site generated in html/")
+    copy_static()
+    users = sorted(config["users"][0].keys())
+    for user in users:
+        gen_user_pages(user, site_url=site_url)
+    gen_index(users=users)
 
 if __name__ == "__main__":
     main()

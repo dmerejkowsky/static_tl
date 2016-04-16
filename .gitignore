@@ -1,8 +1,8 @@
-*.json
+# Python stuff
 *.egg-info
-html/
-*.html
-# my script to deploy to my server (not going to share this ...)
-deploy
 build/
 dist/
+
+# Generated files
+html/
+json/

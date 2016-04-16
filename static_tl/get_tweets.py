@@ -1,13 +1,14 @@
 """
-Dump all tweets to a .json file, suitable for
-a static site generation
+Dump all tweets to several .json file, suitable for
+a static site generation.
 
 You should run this at least once a month
 
 For instance, if your un it on 2016 October 10, you'll get two
-files:
-    tweets-<user>-2016-09.json # all the tweets from September
-    tweets-<user>-2016-10.json # all the tweets this month
+files for each user:
+
+    json/<user>/2016-09.json # all the tweets from September
+    json/<user>/2016-10.json # all the tweets this month
 
 (the last file will be overridden when you'll re-run the
 script in November)
@@ -56,16 +57,9 @@ def set_date(tweet):
     tweet["timestamp"] = date.timestamp
     return date
 
-def is_reply(tweet):
-    """ Assume a tweet is a reply if in_reply_to_screen_name
-    or in_reply_to_status_id are not None
-
-    """
-    return tweet.get("in_reply_to_screen_name") or \
-            tweet.get("in_reply_to_status_id")
 
 
-def get_tweets_since_last_month(twitter_api, with_replies=False):
+def get_tweets_since_last_month(user, twitter_api):
     """ Return two lists of two lists of two elements:
 
     [
@@ -74,15 +68,11 @@ def get_tweets_since_last_month(twitter_api, with_replies=False):
     ]
 
     """
-    user = static_tl.config.get_config()["user"]
     (now, a_month_ago) = last_two_months()
     res = [[now, list()], [a_month_ago, list()]]
     tweets = twitter_api.statuses.user_timeline(
         screen_name=user, count=MAX_TWEETS_IN_TWO_MONTHS)
     for tweet in tweets:
-        if not with_replies:
-            if is_reply(tweet):
-                continue
         date = set_date(tweet)
         if date.month == now.month:
             res[0][1].append(tweet)
@@ -92,26 +82,33 @@ def get_tweets_since_last_month(twitter_api, with_replies=False):
             break
     return res
 
-def dump(tweets):
+def dump(user, tweets):
+    output_dir = "json/%s" % user
+    try:
+        os.makedirs(output_dir)
+    except FileExistsError:
+        pass
     for (date, tweets_this_date) in tweets:
-        output = "tweets-%i-%02i.json" % (date.year, date.month)
+        output_name = "%i-%02i.json" % (date.year, date.month)
+        output = os.path.join(output_dir, output_name)
         with open(output, "w") as fp:
             json.dump(tweets_this_date, fp, indent=2)
             print("Tweets written to", output)
 
 def main():
     config = static_tl.config.get_config()
-    with_replies = config.getboolean("with_replies", fallback=False)
-    if with_replies:
-        print("Getting tweets with replies")
-    else:
-        print("Getting tweets without replies")
-    credentials = get_credentials(config)
-    auth = twitter.OAuth(*credentials)
+    auth_dict = config["auth"]
+    keys = ["token", "token_secret",
+            "api_key", "api_secret"]
+    auth_values = (auth_dict[key] for key in keys)
+    auth = twitter.OAuth(*auth_values)
     api = twitter.Twitter(auth=auth)
-    tweets_since_last_month = get_tweets_since_last_month(api,
-        with_replies=with_replies)
-    dump(tweets_since_last_month)
+    users = sorted(config["users"][0].keys())
+    for user in users:
+        print("Getting tweets from", user)
+        tweets_since_last_month = get_tweets_since_last_month(
+            user, api)
+        dump(user, tweets_since_last_month)
 
 if __name__ == "__main__":
     main()

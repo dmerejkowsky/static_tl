@@ -3,10 +3,10 @@
 """
 
 import os
-import configparser
+
+import toml
 
 def get_config():
-    cfg_path = os.path.expanduser("~/.config/static_tl.cfg")
-    parser = configparser.ConfigParser()
-    parser.read(cfg_path)
-    return parser["static_tl"]
+    cfg_path = os.path.expanduser("~/.config/static_tl.toml")
+    with open(cfg_path, "r") as fp:
+        return toml.load(fp)

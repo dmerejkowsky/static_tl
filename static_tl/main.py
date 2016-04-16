@@ -8,29 +8,19 @@ Two commands to run, every month:
 """
 
 
-import sys
+import argparse
 
 from static_tl.get_tweets import main as main_get
 from static_tl.gen_html import main as main_html
-from static_tl.gen_feed import main as main_feed
 
 def main():
-    if len(sys.argv) < 2:
-        print(USAGE)
-        sys.exit("Missing argument")
-    if len(sys.argv) > 2:
-        print(USAGE)
-        sys.exit("Too many arguments")
-
-    if sys.argv[1] in ["-h", "--help", "help"]:
-        print(USAGE)
-        sys.exit(0)
-
-    if sys.argv[1] == "get":
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(help="avaible actions",
+                                       dest="action")
+    subparsers.add_parser("get")
+    subparsers.add_parser("gen")
+    args = parser.parse_args()
+    if args.action == "get":
         main_get()
-        sys.exit(0)
-
-    if sys.argv[1] == "gen":
+    elif args.action == "gen":
         main_html()
-        main_feed()
-        sys.exit(0)

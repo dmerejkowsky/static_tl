@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>All tweets from {{ user }}</title>
+  <link rel="alternate" type="application/atom+xml" title="tweets feeds" href="feeds.atom" />
+</head>
+
+<body>
+  <h1>Tweets from {{ user }}</h1>
+
+  <ul>
+  {% for page in pages %}
+  {% set metadata = page["metadata"] %}
+  <li>
+    <a href="{{ page.href }}">{{ metadata.year }}-{{ metadata.month }}</a>
+  </li>
+  {% endfor %}
+  </ul>
+
+  <p>
+    Subscribe:
+    <a href="feed.atom">
+      <img alt="atom icon" src="../feed-icon.png">
+    </a>
+  </p>
+
+  <p>
+    <a href="../index.html">back</a>
+  </p>
+
+</body>
+
+</html>
