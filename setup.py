@@ -9,7 +9,10 @@ setup(name="static_tl",
       author_email="d.merej@gmail.com",
       packages=find_packages(),
       package_data={
-          "static_tl" : ["templates/*"],
+          "static_tl" : [
+              "static/*",
+              "templates/*",
+          ],
       },
       install_requires=[
           "arrow",
