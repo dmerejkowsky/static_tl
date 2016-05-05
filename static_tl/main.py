@@ -9,11 +9,14 @@ Two commands to run, every month:
 
 
 import argparse
+import cgitb
+import os
 
 from static_tl.get_tweets import main as main_get
 from static_tl.gen_html import main as main_html
 
 def main():
+    cgitb.enable(logdir=os.getcwd(), format="txt")
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(help="avaible actions",
                                        dest="action")
