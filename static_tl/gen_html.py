@@ -128,7 +128,7 @@ def gen_user_pages(user, site_url=None):
         pass
 
     all_pages = list()
-    for tweets, metadata in static_tl.storage.get_tweets(user=user):
+    for tweets, metadata in static_tl.storage.get_tweets(user):
         metadata["site_url"] = site_url
         page_name = gen_user_page(user, tweets, metadata)
         page = dict()
@@ -160,7 +160,7 @@ def gen_user_feed(user, site_url=None):
             type="application/atom+xml")
 
     feed_generator.id(feed_self_url)
-    for tweets, metadata in static_tl.storage.get_tweets(user=user):
+    for tweets, metadata in static_tl.storage.get_tweets(user):
         year = metadata["year"]
         month = metadata["month"]
         index = len(tweets)

@@ -12,18 +12,41 @@ JSON_FILENAME_RE = re.compile(r"""
     \.json                   # Extension
 """, re.VERBOSE)
 
-def get_tweets(user=None):
+def get_tweets(user):
     """ Get tweets from the .json files retrieved with get_tweets.py
 
     Yield a tuple ([<list of tweets>], { "year" : <year>, "month" : <month number> }
     for every json file in current working directory, most recent tweets
     first
     """
+    for (json_file, metadata) in get_json_files(user):
+        with open(json_file, "r") as fp:
+            tweets = json.load(fp)
+            yield(tweets, metadata)
+
+def get_last_id(user):
+    """ Retrieve last stored tweet id for the given user """
+    json_files = get_json_files(user)
+    try:
+        last_json_file, _ = next(json_files)
+    except StopIteration:
+        return None
+    with open(last_json_file, "r") as fp:
+        tweets = json.load(fp)
+        return tweets[0]['id']
+
+
+def get_json_files(user):
+    """ Return the json files for the given user, associated
+    with their metadata (year and month in a dict)
+
+    """
+    res = list()
     json_dir = os.path.join("json", user)
+    if not os.path.exists(json_dir):
+        return list()
     for filename in sorted(os.listdir(json_dir), reverse=True):
         match = re.match(JSON_FILENAME_RE, filename)
-        full_path = os.path.join(json_dir, filename)
         if match:
-            with open(full_path, "r") as fp:
-                tweets = json.load(fp)
-                yield(tweets, match.groupdict())
+            full_path = os.path.join(json_dir, filename)
+            yield (full_path, match.groupdict())

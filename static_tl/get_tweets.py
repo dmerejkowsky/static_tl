@@ -2,23 +2,16 @@
 Dump all tweets to several .json file, suitable for
 a static site generation.
 
-You should run this at least once a month
+Work incrementally, by looking at the last status ID
+in the most recent .json file: this allows you edit your tweets :)
 
-For instance, if your un it on 2016 October 10, you'll get two
-files for each user:
-
-    json/<user>/2016-09.json # all the tweets from September
-    json/<user>/2016-10.json # all the tweets this month
-
-(the last file will be overridden when you'll re-run the
-script in November)
-
-Of course, you should keep the .json files, and then
-run gen_htlm() with all your .json data ...
+If you run this for the first time we will fetch
+an hard-coded number of tweets.
 
 """
 
 import argparse
+import itertools
 import json
 import os
 
@@ -27,7 +20,7 @@ import twitter
 
 import static_tl.config
 
-MAX_TWEETS_IN_TWO_MONTHS = 30 * 100 * 2 # One hundred per day !
+MAX_TWEETS = 3000 # Just an arbitrary limit ...
 
 def get_credentials(config):
     """ Get the 4 values required for twitter auth
@@ -40,12 +33,6 @@ def get_credentials(config):
             "api_key", "api_secret"]
     return (config[key] for key in keys)
 
-def last_two_months():
-    now = arrow.now()
-    last_month = now.replace(months=-1)
-    return(now, last_month)
-
-
 def set_date(tweet):
     """ A a simple 'timestamp' field to the tweet
     object, and return the date as an arrow object
@@ -57,43 +44,53 @@ def set_date(tweet):
     tweet["timestamp"] = date.timestamp
     return date
 
-
-
-def get_tweets_since_last_month(user, twitter_api):
-    """ Return two lists of two lists of two elements:
-
-    [
-        [this_month, [the (possibly) incomplete list of tweets from this month]]
-        [last_month, [the complete list tweets from last month])],
-    ]
-
+def get_new_tweets(user, twitter_api, last_id=None):
+    """ Yiels a list of tweets more recent than 'last_id',
+    or if last_id is None, the MAX_TWEETS
     """
-    (now, a_month_ago) = last_two_months()
-    res = [[now, list()], [a_month_ago, list()]]
     tweets = twitter_api.statuses.user_timeline(
-        screen_name=user, count=MAX_TWEETS_IN_TWO_MONTHS)
+        screen_name=user, count=MAX_TWEETS)
     for tweet in tweets:
         date = set_date(tweet)
-        if date.month == now.month:
-            res[0][1].append(tweet)
-        elif date.month == a_month_ago.month:
-            res[1][1].append(tweet)
-        else:
+        if last_id and tweet["id"] <= last_id:
             break
-    return res
+        yield tweet
+
+def group_tweets_by_date(tweets):
+    def date_key(tweet):
+        timestamp = tweet["timestamp"]
+        date = arrow.get(timestamp)
+        return (date.year, date.month)
+    return itertools.groupby(tweets, key=date_key)
+
 
 def dump(user, tweets):
+    """ Dump retrieved tweets for the given user
+
+    Return number of tweets written
+    """
+    n = 0
     output_dir = "json/%s" % user
     try:
         os.makedirs(output_dir)
     except FileExistsError:
         pass
-    for (date, tweets_this_date) in tweets:
-        output_name = "%i-%02i.json" % (date.year, date.month)
+    by_date = group_tweets_by_date(tweets)
+    for (year, month), tweets in by_date:
+        tweets = list(tweets)
+        n += len(tweets)
+        output_name = "%i-%02i.json" % (year, month)
         output = os.path.join(output_dir, output_name)
+        if os.path.exists(output):
+            with open(output, "r") as fp:
+                previous_tweets = json.load(fp)
+        else:
+            previous_tweets = list()
         with open(output, "w") as fp:
-            json.dump(tweets_this_date, fp, indent=2)
+            new_tweets = tweets + previous_tweets
+            json.dump(new_tweets, fp, indent=2)
             print("Tweets written to", output)
+    return n
 
 def main():
     config = static_tl.config.get_config()
@@ -106,9 +103,13 @@ def main():
     users = sorted(config["users"][0].keys())
     for user in users:
         print("Getting tweets from", user)
-        tweets_since_last_month = get_tweets_since_last_month(
-            user, api)
-        dump(user, tweets_since_last_month)
+        last_id = static_tl.storage.get_last_id(user)
+        new_tweets = get_new_tweets(user, api, last_id=last_id)
+        n_tweets = dump(user, new_tweets)
+        if n_tweets:
+            print("Written %i new tweets" % n_tweets)
+        else:
+            print("No new tweets found")
 
 if __name__ == "__main__":
     main()
