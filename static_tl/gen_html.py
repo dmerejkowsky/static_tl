@@ -189,10 +189,13 @@ def copy_static():
         os.makedirs(outdir)
     except FileExistsError:
         pass
-    static_contents = os.listdir("static_tl/static")
-    for content in static_contents:
-        src = os.path.join("static_tl/static", content)
-        dest = os.path.join(outdir, content)
+    loader = jinja2.PackageLoader("static_tl", "templates")
+    non_html = [x for x in loader.list_templates() if not x.endswith(".html")]
+    for resource_name in non_html:
+        manager = loader.manager
+        src = manager.resource_filename("static_tl", "templates/%s" % resource_name)
+        dest = os.path.join(outdir, resource_name)
+        print("Copying", src, "->", dest)
         shutil.copy(src, dest)
 
 def main():

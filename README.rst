@@ -86,10 +86,11 @@ top of the ``.toml`` file::
 Tweaking the output
 --------------------
 
-Customization can be done by simply editing the ``Jinja`` templates in ``templates``.
+Customization can be done by simply editing the ``Jinja`` templates in ``static_tl/templates``.
 
 From the template you have access to all the fields returned by the official
 twitter API.
 
-You can also put any file in the ``static`` folder : they will get copied into
-the ``html`` folder : useful for images, ``css`` files and the like.
+Also, any file not ending with ``.html`` in the ``templates`` folder will be
+copied directly to the ``html`` folder: useful for images, ``css`` files and
+the like.
