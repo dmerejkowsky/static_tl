@@ -144,7 +144,7 @@ def gen_index(users=None):
     gen_from_template(output, "index.html",
             { "users" : users })
 
-def gen_user_feed(user, site_url=None):
+def gen_user_feed(user, site_url=None, max_entries=100):
     output = "html/%s/feed.atom" % user
     print("Generating", output)
     feed_generator = feedgen.feed.FeedGenerator()
@@ -160,11 +160,15 @@ def gen_user_feed(user, site_url=None):
             type="application/atom+xml")
 
     feed_generator.id(feed_self_url)
+    n = 0
     for tweets, metadata in static_tl.storage.get_tweets(user):
         year = metadata["year"]
         month = metadata["month"]
         index = len(tweets)
         for tweet in tweets:
+            n += 1
+            if n > max_entries:
+                break
             date = arrow.get(tweet["timestamp"])
             date_str = date.for_json()
             entry = feed_generator.add_entry()
