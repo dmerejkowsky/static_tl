@@ -173,6 +173,7 @@ def gen_user_feed(user, site_url=None, max_entries=100):
             date_str = date.for_json()
             entry = feed_generator.add_entry()
             entry.pubdate(date_str)
+            entry.updated(date_str)
             permalink = "%s/%s/%s-%s.html#%i" % (
                     site_url, user, year, month, index)
             entry_id = "%s %s/%s #%i" % (user, year, month, index)
