@@ -109,6 +109,7 @@ def gen_user_page(user, tweets, metadata):
     tweets = filter_tweets(user, tweets)
     fix_tweets(tweets)
     context["tweets"] = tweets
+    context["user"] = user
     gen_from_template(out, "by_month.html", context)
     return page_name
 
