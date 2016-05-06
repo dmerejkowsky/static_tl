@@ -163,6 +163,7 @@ def gen_user_feed(user, site_url=None, max_entries=100):
     feed_generator.id(feed_self_url)
     n = 0
     for tweets, metadata in static_tl.storage.get_tweets(user):
+        tweets = filter_tweets(user, tweets)
         year = metadata["year"]
         month = metadata["month"]
         index = len(tweets)
