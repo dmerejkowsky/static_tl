@@ -94,3 +94,15 @@ twitter API.
 Also, any file not ending with ``.html`` in the ``templates`` folder will be
 copied directly to the ``html`` folder: useful for images, ``css`` files and
 the like.
+
+Perform backup only
+---------------------
+
+If you do not want to generate HTML files for a given user, use:
+
+.. code-block:: ini
+
+  [[users]]
+
+  [users.<name>]
+  publish = false

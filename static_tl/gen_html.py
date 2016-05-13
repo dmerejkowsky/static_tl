@@ -206,10 +206,12 @@ def main():
     if not site_url:
         print("Warinng: site_url not set, permalinks won't work")
     copy_static()
-    users = sorted(config["users"][0].keys())
-    for user in users:
+    user_config = config["users"][0]
+    published_users = [x for x in user_config
+                       if user_config[x].get("publish", True)]
+    for user in sorted(published_users):
         gen_user_pages(user, site_url=site_url)
-    gen_index(users=users)
+    gen_index(users=published_users)
 
 if __name__ == "__main__":
     main()
