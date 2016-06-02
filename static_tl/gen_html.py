@@ -50,15 +50,18 @@ def get_month_short_name(month_number):
     date = arrow.Arrow(year=2000, day=1, month=int(month_number))
     return date.strftime("%b")
 
-def gen_text_as_html(tweet):
+def fix_tweet_text(tweet):
     """ Take the raw text of the tweet and make it better """
-    # note : every function will modify tweet["text_as_html"] in place
+    # note : every function will modify tweet["fixed_text"] in place
+    tweet["fixed_text"] = tweet["text"]
+
+    # currently we just rewrite all URLs, so that we don't hit
+    # http://t.co ..
     fix_urls(tweet) # need to do this first because we need the indices
-    fix_newlines(tweet)
 
 def fix_urls(tweet):
     """ Replace all the http://t.co URL with their real value """
-    orig = tweet["text_as_html"]
+    orig = tweet["fixed_text"]
     to_do = dict()
     for url in tweet["entities"]["urls"]:
         expanded_url = url["expanded_url"]
@@ -77,10 +80,7 @@ def fix_urls(tweet):
             new_str += orig[i]
             i += 1
 
-    tweet["text_as_html"] = new_str
-
-def fix_newlines(tweet):
-    tweet["text_as_html"] = tweet["text_as_html"].replace("\n", "<br/>")
+    tweet["fixed_text"] = new_str
 
 def fix_tweets(tweets):
     """ Add missing metadata, replace URLs, ... """
@@ -88,8 +88,7 @@ def fix_tweets(tweets):
         date = arrow.get(tweet["timestamp"])
         # Maybe this does not belong here ...
         tweet["date"] = date.strftime("%a %d %b %H:%m")
-        tweet["text_as_html"] = tweet["text"]
-        gen_text_as_html(tweet)
+        fix_tweet_text(tweet)
 
 def gen_from_template(out, template_name, context):
     print("Generating", out)
