@@ -16,9 +16,9 @@ import json
 import os
 
 import arrow
-import twitter
 
 import static_tl.config
+import static_tl.twitter_api
 
 MAX_TWEETS = 3000 # Just an arbitrary limit ...
 
@@ -94,12 +94,7 @@ def dump(user, tweets):
 
 def main():
     config = static_tl.config.get_config()
-    auth_dict = config["auth"]
-    keys = ["token", "token_secret",
-            "api_key", "api_secret"]
-    auth_values = (auth_dict[key] for key in keys)
-    auth = twitter.OAuth(*auth_values)
-    api = twitter.Twitter(auth=auth)
+    api = static_tl.twitter_api.get_api(config)
     users = sorted(config["users"][0].keys())
     for user in users:
         print("Getting tweets from", user)

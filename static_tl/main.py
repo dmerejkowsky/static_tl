@@ -12,7 +12,8 @@ import argparse
 import cgitb
 import os
 
-from static_tl.get_tweets import main as main_get
+from static_tl.get_tweets import main as main_get_tweets
+from static_tl.get_following import main as main_get_following
 from static_tl.gen_html import main as main_html
 
 def main():
@@ -24,6 +25,7 @@ def main():
     subparsers.add_parser("gen")
     args = parser.parse_args()
     if args.action == "get":
-        main_get()
+        main_get_tweets()
+        main_get_following()
     elif args.action == "gen":
         main_html()
