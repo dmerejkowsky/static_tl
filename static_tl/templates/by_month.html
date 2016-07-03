@@ -16,7 +16,17 @@
 
   {# using revindex so that they don't change when
      there's a new tweet #}
-  <h2 id="{{ loop.revindex }}">{{ tweet.date }}
+  <h2 id="{{ loop.revindex }}">
+    {# You can click on the twitter logo to see the original tweet on twitter.com
+       (Note: need to keep that on one line, otherwise we got horizontal lines in the
+       final HTML)
+    #}
+    <a href="http://twitter.com/{{ user }}/status/{{ tweet.id }}"><img alt="twitter logo" src="../twitter-logo.png"/></a>
+
+    {# Rest of the h2 title is the tweet date #}
+    {{ tweet.date }}
+
+    {# If site_url is set, generate a permalink with a ¶ symbol #}
     {% if site_url %}
     <a href="{{ site_url }}/{{ user }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
     ¶
