@@ -41,14 +41,14 @@ def filter_tweets(user, tweets):
     return res
 
 
-def get_month_short_name(month_number):
+def get_month_name(month_number):
     """
     >>> get_month_short_name(4)
-    'Apr"
+    'April'
 
     """
     date = arrow.Arrow(year=2000, day=1, month=int(month_number))
-    return date.strftime("%b")
+    return date.strftime("%B")
 
 def fix_tweet_text(tweet):
     """ Take the raw text of the tweet and make it better """
@@ -87,7 +87,7 @@ def fix_tweets(tweets):
     for tweet in tweets:
         date = arrow.get(tweet["timestamp"])
         # Maybe this does not belong here ...
-        tweet["date"] = date.strftime("%a %d %b %H:%m")
+        tweet["date"] = date.strftime("%a %B %d %H:%m")
         fix_tweet_text(tweet)
 
 def gen_from_template(out, template_name, context):
@@ -102,7 +102,7 @@ def gen_from_template(out, template_name, context):
 def gen_user_page(user, tweets, metadata):
     context = metadata
     month_number =  metadata["month"]
-    context["month_short_name"] = get_month_short_name(month_number)
+    context["month_name"] = get_month_name(month_number)
     page_name = "%s-%s.html" % (metadata["year"], month_number)
     out = "html/%s/%s" % (user, page_name)
     tweets = filter_tweets(user, tweets)
