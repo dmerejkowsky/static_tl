@@ -8,7 +8,7 @@ import os
 import shutil
 
 import arrow
-import feedgen.feed
+import feedgenerator
 import jinja2
 
 import static_tl.config
@@ -147,19 +147,15 @@ def gen_index(users=None):
 def gen_user_feed(user, site_url=None, max_entries=100):
     output = "html/%s/feed.atom" % user
     print("Generating", output)
-    feed_generator = feedgen.feed.FeedGenerator()
     title = "Tweets from %s" % user
     description = title
-    feed_generator.title(title)
-    feed_generator.description(description)
-    feed_alternate_url = "%s/%s" % (site_url, user)
     feed_self_url = "%s/%s.atom" % (site_url, user)
-    feed_generator.link(rel="alternate", href=feed_alternate_url,
-            type="text/html")
-    feed_generator.link(rel="self", href=feed_self_url,
-            type="application/atom+xml")
+    feed_generator = feedgenerator.Atom1Feed(
+            title=title,
+            description=description,
+            link=site_url,
+            feed_url=feed_self_url)
 
-    feed_generator.id(feed_self_url)
     n = 0
     for tweets, metadata in static_tl.storage.get_tweets(user):
         tweets = filter_tweets(user, tweets)
@@ -170,19 +166,23 @@ def gen_user_feed(user, site_url=None, max_entries=100):
             n += 1
             if n > max_entries:
                 break
+            fix_tweet_text(tweet)
             date = arrow.get(tweet["timestamp"])
-            date_str = date.for_json()
-            entry = feed_generator.add_entry()
-            entry.pubdate(date_str)
-            entry.updated(date_str)
             permalink = "%s/%s/%s-%s.html#%i" % (
                     site_url, user, year, month, index)
             entry_id = "%s %s/%s #%i" % (user, year, month, index)
-            entry.title(entry_id)
-            entry.link(href=permalink)
-            entry.id(entry_id)
+            description = tweet["fixed_text"]
+            description = "<pre>%s</pre>" % description
+            entry = feed_generator.add_item(
+                    title=entry_id,
+                    link=permalink,
+                    description=description,
+                    pubdate=date,
+                    updated=date,
+            )
             index -= 1
-    feed_generator.atom_file(output, pretty=True)
+    with open(output, "w") as fp:
+        feed_generator.write(fp, "utf-8")
 
 def copy_static():
     outdir = "html"
