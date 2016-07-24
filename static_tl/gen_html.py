@@ -173,7 +173,7 @@ def gen_user_feed(user, site_url=None, max_entries=100):
             entry_id = "%s %s/%s #%i" % (user, year, month, index)
             description = tweet["fixed_text"]
             description = "<pre>%s</pre>" % description
-            entry = feed_generator.add_item(
+            feed_generator.add_item(
                     title=entry_id,
                     link=permalink,
                     description=description,
