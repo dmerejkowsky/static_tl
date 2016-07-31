@@ -19,13 +19,13 @@
     </a>
   </h2>
 
-<pre>
 {# We want to keep the <a> tags in the raw text,
 the rest is already escaped for us by Twitter #}
 {% autoescape false %}
+<pre>
 {{ tweet.text }}
-{% endautoescape %}
 </pre>
+{% endautoescape %}
 
   {% endfor %}
 
