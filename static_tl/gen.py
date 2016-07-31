@@ -198,16 +198,14 @@ def gen_user_feed(user, site_url=None, max_entries=100):
 
 def copy_static():
     outdir = "html"
-    try:
-        os.makedirs(outdir)
-    except FileExistsError:
-        pass
+    static_dir = os.path.join(outdir, "static")
+    os.makedirs(static_dir, exist_ok=True)
     loader = jinja2.PackageLoader("static_tl", "templates")
-    non_html = [x for x in loader.list_templates() if not x.endswith(".html")]
-    for resource_name in non_html:
+    static_files = [x for x in loader.list_templates() if x.startswith("static/")]
+    for static_file in static_files:
         manager = loader.manager
-        src = manager.resource_filename("static_tl", "templates/%s" % resource_name)
-        dest = os.path.join(outdir, resource_name)
+        src = manager.resource_filename("static_tl", "templates/%s" % static_file)
+        dest = os.path.join(outdir, static_file)
         print("Copying", src, "->", dest)
         shutil.copy(src, dest)
 
