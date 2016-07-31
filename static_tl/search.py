@@ -32,7 +32,10 @@ def close_connection(exception):
 
 def get_users(db):
     cursor = db.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+    cursor.execute("""
+SELECT name FROM sqlite_master WHERE TYPE='table' ORDER BY name
+""")
+
     res = [row[0] for row in cursor.fetchall()]
     return res
 
