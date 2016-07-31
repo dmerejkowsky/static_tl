@@ -3,6 +3,7 @@ import os
 import sqlite3
 
 import flask
+from werkzeug.wsgi import DispatcherMiddleware
 
 
 Tweet = collections.namedtuple("Tweet", "twitter_id, text, date")
@@ -21,8 +22,15 @@ def get_db():
 
 app = flask.Flask(__name__)
 
+def simple(ev, resp):
+    resp(b'200 OK', [(b'Content-Type', b'text/plain')])
+    return [b'Hello WSGI World']
+
 if APPLICATION_ROOT:
+    print("setting APPLICATION_ROOT to", APPLICATION_ROOT)
     app.config["APPLICATION_ROOT"] = APPLICATION_ROOT
+    app.wsgi_app = DispatcherMiddleware(simple,
+            { APPLICATION_ROOT: app.wsgi_app })
 
 @app.teardown_appcontext
 def close_connection(exception):
