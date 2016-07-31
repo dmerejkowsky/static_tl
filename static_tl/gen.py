@@ -149,10 +149,10 @@ def gen_user_pages(user, site_url=None):
     gen_user_feed(user, site_url=site_url)
 
 
-def gen_index(users=None):
+def gen_index(users=None, site_url=None):
     output = os.path.join("html", "index.html")
     gen_from_template(output, "index.html",
-            { "users" : users })
+            {"users" : users, "site_url": site_url})
 
 
 def gen_user_feed(user, site_url=None, max_entries=100):
@@ -258,7 +258,7 @@ def main():
                        if user_config[x].get("publish", True)]
     for user in sorted(published_users):
         gen_user_pages(user, site_url=site_url)
-    gen_index(users=published_users)
+    gen_index(users=published_users, site_url=site_url)
     for user in user_config:
         updatedb(user)
 
