@@ -13,7 +13,6 @@ DATABASE = os.environ.get("DB_PATH", "tweets.sqlite")
 APPLICATION_ROOT = os.environ.get("APPLICATION_ROOT")
 
 
-
 def get_db():
     db = getattr(flask.g, '_database', None)
     if db is None:
