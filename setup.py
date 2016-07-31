@@ -17,6 +17,7 @@ setup(name="static_tl",
       install_requires=[
           "arrow",
           "feedgenerator",
+          "flask",
           "jinja2",
           "toml",
           "twitter"
