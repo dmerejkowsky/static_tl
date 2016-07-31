@@ -34,7 +34,7 @@ def get_users(db):
     return res
 
 
-@app.route("/")
+@app.route("/search")
 def search():
     db = get_db()
     pattern = flask.request.args.get("pattern")
