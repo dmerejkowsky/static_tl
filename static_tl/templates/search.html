@@ -9,7 +9,7 @@
 
 <h2> Tweet search </h2>
 
-<form name="search" action="/search" method="get" >
+<form name="search" action="{{ url_for('search') }}" method="get" >
   <p>
   User:
   <select name="user">

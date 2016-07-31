@@ -9,7 +9,7 @@
 
   <h1> Matching tweets from {{ user }} </h1>
 
-  <a href="/">back</a>
+  <a href=" {{ url_for('search') }}">back</a>
 
   {% for tweet in tweets %}
 
