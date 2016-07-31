@@ -3,8 +3,6 @@ import os
 import sqlite3
 
 import flask
-from werkzeug.wsgi import DispatcherMiddleware
-
 
 Tweet = collections.namedtuple("Tweet", "twitter_id, text, date")
 
