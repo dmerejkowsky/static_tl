@@ -6,7 +6,6 @@ import flask
 
 Tweet = collections.namedtuple("Tweet", "twitter_id, text, date")
 
-
 DATABASE = os.environ.get("DB_PATH", "tweets.sqlite")
 APPLICATION_ROOT = os.environ.get("APPLICATION_ROOT")
 
@@ -19,10 +18,10 @@ def get_db():
 
 app = flask.Flask(__name__)
 
-
 if APPLICATION_ROOT:
     print("setting APPLICATION_ROOT to", APPLICATION_ROOT)
     app.config["APPLICATION_ROOT"] = APPLICATION_ROOT
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -65,6 +64,7 @@ def main():
     if debug:
         app.debug = True
     app.run(port=port)
+
 
 if __name__ == "__main__":
     main()
