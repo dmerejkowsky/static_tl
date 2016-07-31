@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tweets search result</title>
+</head>
+
+<body>
+
+  <h1> Matching tweets from {{ user }} </h1>
+
+  <a href="/">back</a>
+
+  {% for tweet in tweets %}
+
+  <h2> {{ tweet.year }} {{ tweet.month }} {{ tweet.id }}</h2>
+
+    <pre>
+{# We want to keep the <a> tags in the raw text,
+the rest is already escaped for us by Twitter #}
+{% autoescape false %}
+{{ tweet.text }}
+{% endautoescape %}
+    </pre>
+
+  {% endfor %}
+
+</body>
+
+</html>

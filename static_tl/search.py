@@ -1,23 +1,57 @@
+import collections
 import os
 import sqlite3
 
 import flask
 
-DB_PATH = os.environ.get("DB_PATH", "tweets.sqlite")
-CONNECTION = sqlite3.connect(DB_PATH)
+
+Tweet = collections.namedtuple("Tweet", "year, month, id, text")
+
+DATABASE = os.environ.get("DB_PATH", "tweets.sqlite")
 
 
-app = flask.Flask("static_tl_search")
 
-@app.route("/search")
+def get_db():
+    db = getattr(flask.g, '_database', None)
+    if db is None:
+        db = flask.g._database = sqlite3.connect(DATABASE)
+    return db
+
+app = flask.Flask(__name__)
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(flask.g, '_database', None)
+    if db is not None:
+        db.close()
+
+
+def get_users(db):
+    cursor = db.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
+    res = [row[0] for row in cursor.fetchall()]
+    print("Users:", res)
+    return res
+
+
+@app.route("/")
 def search():
-    print(flask.request.args)
+    db = get_db()
     pattern = flask.request.args.get("pattern")
     user = flask.request.args.get("user")
-    if pattern:
-        pass
+    if pattern and user:
+        pattern = "%" + pattern + "%"
+        cursor = db.cursor()
+        query = "SELECT year, month, id, text FROM {user} WHERE text LIKE ?"
+        query = query.format(user=user)
+        cursor.execute(query, (pattern,))
+        def yield_tweets():
+            for row in cursor.fetchall():
+                yield Tweet(*row)
+        return flask.render_template("search_results.html",
+                                     tweets=yield_tweets(), user=user)
     else:
-        return flask.render_template("search.html")
+        return flask.render_template("search.html", users=get_users(db))
 
 
 def main():
