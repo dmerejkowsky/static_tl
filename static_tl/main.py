@@ -13,7 +13,7 @@ import cgitb
 import os
 
 from static_tl.get_tweets import main as main_get
-from static_tl.gen_html import main as main_html
+from static_tl.gen import main as main_gen
 
 def main():
     cgitb.enable(logdir=os.getcwd(), format="txt")
@@ -26,4 +26,4 @@ def main():
     if args.action == "get":
         main_get()
     elif args.action == "gen":
-        main_html()
+        main_gen()
