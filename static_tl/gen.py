@@ -93,7 +93,7 @@ def fix_tweets(tweets):
     for tweet in tweets:
         date = arrow.get(tweet["timestamp"])
         # Maybe this does not belong here ...
-        tweet["date"] = date.strftime("%a %B %d %H:%m")
+        tweet["date"] = date.strftime("%Y %a %B %d %H:%m")
         fix_tweet_text(tweet)
 
 
