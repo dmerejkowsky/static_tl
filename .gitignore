@@ -6,3 +6,4 @@ dist/
 # Generated files
 html/
 json/
+*.sqlite
