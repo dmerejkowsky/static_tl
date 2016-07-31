@@ -5,7 +5,8 @@ import sqlite3
 import flask
 
 
-Tweet = collections.namedtuple("Tweet", "year, month, id, text")
+Tweet = collections.namedtuple("Tweet", "twitter_id, text, date")
+
 
 DATABASE = os.environ.get("DB_PATH", "tweets.sqlite")
 
@@ -30,7 +31,6 @@ def get_users(db):
     cursor = db.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE TYPE='table'")
     res = [row[0] for row in cursor.fetchall()]
-    print("Users:", res)
     return res
 
 
@@ -42,7 +42,7 @@ def search():
     if pattern and user:
         pattern = "%" + pattern + "%"
         cursor = db.cursor()
-        query = "SELECT year, month, id, text FROM {user} WHERE text LIKE ?"
+        query = "SELECT twitter_id, text, date FROM {user} WHERE text LIKE ?"
         query = query.format(user=user)
         cursor.execute(query, (pattern,))
         def yield_tweets():

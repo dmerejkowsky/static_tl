@@ -221,11 +221,11 @@ def updatedb(user):
     sql = """\
 DROP TABLE IF EXISTS {user};
 
-CREATE TABLE {user} (text VARCHAR(500) NOT NULL,
-                     year INTEGER NOT NULL,
-                     month INTEGER NOT NULL,
-                     id INTEGER NOT NULL,
-                     UNIQUE(year, month, id));
+CREATE TABLE {user} (
+                     twitter_id INTEGER NOT NULL,
+                     text VARCHAR(500) NOT NULL,
+                     date VARCHAR(30),
+                     UNIQUE(twitter_id));
 
 """
     db.executescript(sql.format(user=user))
@@ -234,16 +234,12 @@ CREATE TABLE {user} (text VARCHAR(500) NOT NULL,
     def yield_tweets():
         for tweets, metadata in static_tl.storage.get_tweets(user):
             tweets = filter_tweets(user, tweets)
-            year = metadata["year"]
-            month = metadata["month"]
-            index = len(tweets)
+            fix_tweets(tweets)
             for tweet in tweets:
                 fix_tweet_text(tweet)
-                text = tweet["fixed_text"]
-                yield year, month, index, text
-                index -= 1
+                yield tweet["id"], tweet["text"], tweet["date"]
 
-    sql = "INSERT INTO {user} (year, month, id, text) VALUES (?, ?, ?, ?)"
+    sql = "INSERT INTO {user} (twitter_id, text, date) VALUES (?, ?, ?)"
     sql = sql.format(user=user)
     db.executemany(sql, yield_tweets())
     db.commit()
