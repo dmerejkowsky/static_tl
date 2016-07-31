@@ -237,7 +237,7 @@ CREATE TABLE {user} (
             fix_tweets(tweets)
             for tweet in tweets:
                 fix_tweet_text(tweet)
-                yield tweet["id"], tweet["text"], tweet["date"]
+                yield tweet["id"], tweet["fixed_text"], tweet["date"]
 
     sql = "INSERT INTO {user} (twitter_id, text, date) VALUES (?, ?, ?)"
     sql = sql.format(user=user)
