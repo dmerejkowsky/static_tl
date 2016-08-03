@@ -4,6 +4,7 @@ import sqlite3
 
 import flask
 
+import static_tl.config
 Tweet = collections.namedtuple("Tweet", "twitter_id, text, date")
 
 DATABASE = os.environ.get("DB_PATH", "tweets.sqlite")
@@ -15,6 +16,13 @@ def get_db():
     if db is None:
         db = flask.g._database = sqlite3.connect(DATABASE)
     return db
+
+def get_static_tl_conf():
+    static_tl_conf = getattr(flask.g, '_static_tl_conf', None)
+    if static_tl_conf is None:
+        static_tl_conf = static_tl.config.get_config()
+        flask.g._static_tl_conf = static_tl_conf
+    return static_tl_conf
 
 app = flask.Flask(__name__)
 
@@ -57,7 +65,10 @@ def search():
         return flask.render_template("search_results.html",
                                      tweets=yield_tweets(), user=user)
     else:
-        return flask.render_template("search.html", users=get_users(db))
+        static_tl_conf = get_static_tl_conf()
+        site_url = static_tl_conf.get("site_url")
+        return flask.render_template("search.html", users=get_users(db),
+                                     site_url=site_url)
 
 
 def main():

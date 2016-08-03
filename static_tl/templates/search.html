@@ -22,6 +22,12 @@
   <input type="submit" value="Submit" />
 </form>
 
+{% if site_url %}
+<p>
+  <a href="{{ site_url }}">back</a>
+<p>
+{% endif %}
+
 </body>
 
 </html>
