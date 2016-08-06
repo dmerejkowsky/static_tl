@@ -25,6 +25,7 @@ if APPLICATION_ROOT:
 
 STATIC_TL_CONF = static_tl.config.get_config()
 app.secret_key = STATIC_TL_CONF["flask"]["secret_key"]
+app.static_folder = "templates/static"
 
 @app.teardown_appcontext
 def close_connection(exception):
