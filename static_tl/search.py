@@ -17,19 +17,14 @@ def get_db():
         db = flask.g._database = sqlite3.connect(DATABASE)
     return db
 
-def get_static_tl_conf():
-    static_tl_conf = getattr(flask.g, '_static_tl_conf', None)
-    if static_tl_conf is None:
-        static_tl_conf = static_tl.config.get_config()
-        flask.g._static_tl_conf = static_tl_conf
-    return static_tl_conf
-
 app = flask.Flask(__name__)
 
 if APPLICATION_ROOT:
     print("setting APPLICATION_ROOT to", APPLICATION_ROOT)
     app.config["APPLICATION_ROOT"] = APPLICATION_ROOT
 
+STATIC_TL_CONF = static_tl.config.get_config()
+app.secret_key = STATIC_TL_CONF["flask"]["secret_key"]
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -61,15 +56,14 @@ def search(user):
         try:
             cursor.execute(query, (pattern,))
         except sqlite3.OperationalError:
-            flask.abort(404)
+            flask.flash("No such user")
         def yield_tweets():
             for row in cursor.fetchall():
                 yield Tweet(*row)
         return flask.render_template("search_results.html", tweets=yield_tweets(),
                                      user=user, search_url=search_url)
     else:
-        static_tl_conf = get_static_tl_conf()
-        site_url = static_tl_conf.get("site_url")
+        site_url = STATIC_TL_CONF.get("site_url")
         return flask.render_template("search.html", user=user,
                                      site_url=site_url, search_url=search_url)
 

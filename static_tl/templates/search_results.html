@@ -7,6 +7,23 @@
 
 <body>
 
+  {% with messages = get_flashed_messages() %}
+
+  {% if messages %}
+
+  <h2> Error </h2>
+
+  <p>
+      {% for message in messages %}
+      {{ message }}
+      </p>
+      {% endfor %}
+    </ul>
+    <a href=" {{ search_url }}">back</a>
+  </p>
+
+  {% else %}
+
   <h1> Matching tweets from {{ user }} </h1>
 
   <a href=" {{ search_url }}">back</a>
@@ -27,6 +44,10 @@ the rest is already escaped for us by Twitter #}
 {% endautoescape %}
 
   {% endfor %}
+
+  {% endif %}
+
+  {% endwith %}
 
 </body>
 
