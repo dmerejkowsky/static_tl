@@ -7,17 +7,9 @@
 
 <body>
 
-<h2> Tweet search </h2>
+  <h2> Tweet search for {{ user }}</h2>
 
-<form name="search" action="{{ url_for('search') }}" method="get" >
-  <p>
-  User:
-  <select name="user">
-    {% for user in users %}
-    <option value="{{ user }}">{{ user }}</option>
-    {% endfor %}
-  </select>
-  </p>
+<form name="search" action="{{ search_url }}" method="get" >
   Search : <input type="text" name="pattern">
   <input type="submit" value="Submit" />
 </form>

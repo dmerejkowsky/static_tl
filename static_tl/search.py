@@ -48,12 +48,12 @@ SELECT name FROM sqlite_master WHERE TYPE='table' ORDER BY name
     return res
 
 
-@app.route("/search")
-def search():
+@app.route("/search/<user>")
+def search(user):
     db = get_db()
     pattern = flask.request.args.get("pattern")
-    user = flask.request.args.get("user")
-    if pattern and user:
+    search_url = flask.url_for("search",  user=user)
+    if pattern:
         pattern = "%" + pattern + "%"
         cursor = db.cursor()
         query = "SELECT twitter_id, text, date FROM {user} WHERE text LIKE ?"
@@ -62,13 +62,13 @@ def search():
         def yield_tweets():
             for row in cursor.fetchall():
                 yield Tweet(*row)
-        return flask.render_template("search_results.html",
-                                     tweets=yield_tweets(), user=user)
+        return flask.render_template("search_results.html", tweets=yield_tweets(),
+                                     user=user, search_url=search_url)
     else:
         static_tl_conf = get_static_tl_conf()
         site_url = static_tl_conf.get("site_url")
-        return flask.render_template("search.html", users=get_users(db),
-                                     site_url=site_url)
+        return flask.render_template("search.html", user=user,
+                                     site_url=site_url, search_url=search_url)
 
 
 def main():
