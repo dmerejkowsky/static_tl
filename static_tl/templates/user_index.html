@@ -9,6 +9,12 @@
 <body>
   <h1>Tweets from {{ user }}</h1>
 
+{% if site_url %}
+  <p>
+    <a href="{{ site_url }}/search/{{ user }}">Search</a>
+  </p>
+{% endif %}
+
   <ul>
   {% for page in pages %}
   {% set metadata = page["metadata"] %}
@@ -25,13 +31,6 @@
     </a>
   </p>
 
-{% if site_url %}
-
-  <p>
-    <a href="{{ site_url }}/search/{{ user }}">Search</a>
-  </p>
-
-{% endif %}
 
   <p>
     <a href="../index.html">back</a>

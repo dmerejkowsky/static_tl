@@ -121,11 +121,12 @@ def gen_user_page(user, tweets, metadata):
     return page_name
 
 
-def gen_user_index(user, all_pages):
+def gen_user_index(user, all_pages, site_url=None):
     out = "html/%s/index.html" % user
     context = dict()
     context["pages"] = all_pages
     context["user"] = user
+    context["site_url"] = site_url
     gen_from_template(out, "user_index.html", context)
     return out
 
@@ -145,7 +146,7 @@ def gen_user_pages(user, site_url=None):
         page["href"] = page_name
         page["metadata"] = metadata
         all_pages.append(page)
-    gen_user_index(user, all_pages)
+    gen_user_index(user, all_pages, site_url=site_url)
     gen_user_feed(user, site_url=site_url)
 
 
