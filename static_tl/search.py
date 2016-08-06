@@ -58,7 +58,10 @@ def search(user):
         cursor = db.cursor()
         query = "SELECT twitter_id, text, date FROM {user} WHERE text LIKE ?"
         query = query.format(user=user)
-        cursor.execute(query, (pattern,))
+        try:
+            cursor.execute(query, (pattern,))
+        except sqlite3.OperationalError:
+            flask.abort(404)
         def yield_tweets():
             for row in cursor.fetchall():
                 yield Tweet(*row)
