@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Tweets search</title>
-</head>
+{% extends "layout.html" %}
 
-<body>
+{% block title %}Tweets search{% endblock %}
 
-  <h2> Tweet search for {{ user }}</h2>
+{% block body %}
+<h2> Tweet search for {{ user }}</h2>
 
 <form name="search" action="{{ search_url }}" method="get" >
   Search : <input type="text" name="pattern">
@@ -20,6 +16,4 @@
 <p>
 {% endif %}
 
-</body>
-
-</html>
+{% endblock %}

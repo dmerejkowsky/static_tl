@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>All tweets</title>
-</head>
+{% extends "layout.html" %}
 
-<body>
+{% block title %}All Tweets{% endblock %}
+
+{% block body %}
+
   <h1>All tweets</h1>
 
   <h2>Users</h2>
@@ -18,9 +16,4 @@
     {% endfor %}
   </ul>
 
-
-{% include "footer.html" %}
-
-</body>
-
-</html>
+{% endblock %}

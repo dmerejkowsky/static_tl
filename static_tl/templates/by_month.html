@@ -1,48 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>{{ user }} - Tweets from {{month_name}} {{year}} </title>
-</head>
+{% extends "layout.html" %}
 
+{% block title %}{{ user }} - Tweets from {{month_name}} {{year}} {% endblock %}
 
-<body>
+{% block body %}
 
-  <a href="index.html">back</a>
+<a href="index.html">back</a>
 
-  <h1>{{month_name}} {{ year }}</h1>
+<h1>{{month_name}} {{ year }}</h1>
 
-  {% for tweet in tweets %}
+{% for tweet in tweets %}
 
-  {# using revindex so that they don't change when
-     there's a new tweet #}
-  <h2 id="{{ loop.revindex }}">
-    {# You can click on the twitter logo to see the original tweet on twitter.com
-       (Note: need to keep that on one line, otherwise we got horizontal lines in the
-       final HTML)
-    #}
-    <a href="http://twitter.com/{{ user }}/status/{{ tweet.id }}"><img alt="twitter logo" src="../static/twitter-logo.png"/></a>
+{# using revindex so that they don't change when
+    there's a new tweet #}
+<h2 id="{{ loop.revindex }}">
+  {# You can click on the twitter logo to see the original tweet on twitter.com
+      (Note: need to keep that on one line, otherwise we got horizontal lines in the
+      final HTML)
+  #}
+  <a href="http://twitter.com/{{ user }}/status/{{ tweet.id }}"><img alt="twitter logo" src="../static/twitter-logo.png"/></a>
 
-    {# Rest of the h2 title is the tweet date #}
-    {{ tweet.date }}
+  {# Rest of the h2 title is the tweet date #}
+  {{ tweet.date }}
 
-    {# If site_url is set, generate a permalink with a ¶ symbol #}
-    {% if site_url %}
-    <a href="{{ site_url }}/{{ user }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
-    ¶
-    </a>
-    {% endif %}
-  </h2>
-  <pre>
+  {# If site_url is set, generate a permalink with a ¶ symbol #}
+  {% if site_url %}
+  <a href="{{ site_url }}/{{ user }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
+  ¶
+  </a>
+  {% endif %}
+</h2>
+<pre>
 {{ tweet.fixed_text }}
-  </pre>
+</pre>
 
-  {% endfor %}
+{% endfor %}
 
-  <a href="index.html">back</a>
+<a href="index.html">back</a>
 
-{% include "footer.html" %}
-
-</body>
-
-</html>
+{% endblock %}

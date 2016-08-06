@@ -208,8 +208,10 @@ def copy_static():
         manager = loader.manager
         src = manager.resource_filename("static_tl", "templates/%s" % static_file)
         dest = os.path.join(outdir, static_file)
-        print("Copying", src, "->", dest)
-        shutil.copy(src, dest)
+        print(src, "->", dest)
+        if os.path.exists(dest):
+            os.remove(dest)
+        os.symlink(src, dest)
 
 
 

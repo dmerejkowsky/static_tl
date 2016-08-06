@@ -1,39 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Tweets search result</title>
-</head>
+{% extends "layout.html" %}
+{% block title %}Tweets search result{% endblock %}
 
-<body>
+{% block body %}
 
-  {% with messages = get_flashed_messages() %}
+{% with messages = get_flashed_messages() %}
 
-  {% if messages %}
+{% if messages %}
 
-  <h2> Error </h2>
+<h2> Error </h2>
 
-  <p>
-      {% for message in messages %}
-      {{ message }}
-      </p>
-      {% endfor %}
-    </ul>
-    <a href=" {{ search_url }}">back</a>
-  </p>
-
-  {% else %}
-
-  <h1> Matching tweets from {{ user }} </h1>
-
+<p>
+    {% for message in messages %}
+    {{ message }}
+    </p>
+    {% endfor %}
+  </ul>
   <a href=" {{ search_url }}">back</a>
+</p>
 
-  {% for tweet in tweets %}
+{% else %}
 
-  <h2>
-    <a href="http://twitter.com/{{ user }}/status/{{ tweet.twitter_id }}"><img alt="twitter logo" src="{{ url_for('static', filename='twitter-logo.png') }}"/></a>
-    {{ tweet.date }}
-  </h2>
+<h1> Matching tweets from {{ user }} </h1>
+
+<a href=" {{ search_url }}">back</a>
+
+{% for tweet in tweets %}
+
+<h2>
+  <a href="http://twitter.com/{{ user }}/status/{{ tweet.twitter_id }}"><img alt="twitter logo" src="{{ url_for('static', filename='twitter-logo.png') }}"/></a>
+  {{ tweet.date }}
+</h2>
 
 {# We want to keep the <a> tags in the raw text,
 the rest is already escaped for us by Twitter #}
@@ -43,12 +39,10 @@ the rest is already escaped for us by Twitter #}
 </pre>
 {% endautoescape %}
 
-  {% endfor %}
+{% endfor %}
 
-  {% endif %}
+{% endif %}
 
-  {% endwith %}
+{% endwith %}
 
-</body>
-
-</html>
+{% endblock %}
