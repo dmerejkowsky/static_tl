@@ -98,8 +98,13 @@ def fix_tweets(tweets):
         fix_tweet_text(tweet)
 
 
-def gen_from_template(out, template_name, context):
-    print("Generating", out)
+def gen_html_from_template(out, template_name, context):
+    """ Generate an html file from the given template.
+    ``out`` should be a relative path in the ``html``
+    folder
+
+    """
+    print("Generating", "html/%s" % out)
     loader = jinja2.PackageLoader("static_tl", "templates")
     env = jinja2.Environment(loader=loader)
     template = env.get_template(template_name)
@@ -113,22 +118,22 @@ def gen_user_page(user, tweets, metadata):
     month_number =  metadata["month"]
     context["month_name"] = get_month_name(month_number)
     page_name = "%s-%s.html" % (metadata["year"], month_number)
-    out = "html/%s/%s" % (user, page_name)
+    out = "%s/%s" % (user, page_name)
     tweets = filter_tweets(user, tweets)
     fix_tweets(tweets)
     context["tweets"] = tweets
     context["user"] = user
-    gen_from_template(out, "by_month.html", context)
+    gen_html_from_template(out, "by_month.html", context)
     return page_name
 
 
 def gen_user_index(user, all_pages, site_url=None):
-    out = "html/%s/index.html" % user
+    out = "%s/index.html" % user
     context = dict()
     context["pages"] = all_pages
     context["user"] = user
     context["site_url"] = site_url
-    gen_from_template(out, "user_index.html", context)
+    gen_html_from_template(out, "user_index.html", context)
     return out
 
 
@@ -152,8 +157,7 @@ def gen_user_pages(user, site_url=None):
 
 
 def gen_index(users=None, site_url=None):
-    output = os.path.join("html", "index.html")
-    gen_from_template(output, "index.html",
+    gen_html_from_template("index.html", "index.html",
             {"users" : users, "site_url": site_url})
 
 
