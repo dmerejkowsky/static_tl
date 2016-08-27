@@ -52,7 +52,7 @@ def search(user):
     if pattern:
         pattern = "%" + pattern + "%"
         cursor = db.cursor()
-        query = "SELECT twitter_id, text, date FROM {user} WHERE text LIKE ?"
+        query = "SELECT twitter_id, text, date FROM {user} WHERE text MATCH ?"
         query = query.format(user=user)
         try:
             cursor.execute(query, (pattern,))
