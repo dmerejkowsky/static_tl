@@ -105,11 +105,18 @@ def gen_html_from_template(out, template_name, context):
 
     """
     print("Generating", "html/%s" % out)
+    subdirs = [x for x in out if x == "/"]
+    if not subdirs:
+        static_path = "static"
+    else:
+        static_path = "../" * len(subdirs) + "static"
+    context["static_path"] = static_path
     loader = jinja2.PackageLoader("static_tl", "templates")
     env = jinja2.Environment(loader=loader)
     template = env.get_template(template_name)
     to_write = template.render(**context)
-    with open(out, "w") as fp:
+    full_path = os.path.join(os.getcwd(), "html", out)
+    with open(full_path, "w") as fp:
         fp.write(to_write)
 
 
