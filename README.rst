@@ -106,3 +106,18 @@ If you do not want to generate HTML files for a given user, use:
 
   [users.<name>]
   publish = false
+
+
+Searching
+----------
+
+Since version 0.4, ``static_tl gen`` also generates a ``tweets.sqlite`` file
+containing one table per user.
+
+We use the ``FTS4`` extension.
+
+A search application is available in the sources : ``static_tl/search.py``,
+using the `flask <http://flask.pocoo.org/>`_ framework.
+
+This will only work if ``site_url`` is set, and
+if the ``flask`` server can be reached at  ``<site_url>/search``
