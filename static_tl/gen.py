@@ -220,11 +220,12 @@ def updatedb(user):
     sql = """\
 DROP TABLE IF EXISTS {user};
 
-CREATE TABLE {user} (
+CREATE VIRTUAL TABLE {user} USING fts4(
                      twitter_id INTEGER NOT NULL,
                      text VARCHAR(500) NOT NULL,
                      date VARCHAR(30),
                      UNIQUE(twitter_id));
+
 
 """
     db.executescript(sql.format(user=user))
