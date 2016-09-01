@@ -7,6 +7,10 @@ body {
   padding: 4em 1em;
 }
 
+.tweet img {
+  width: 50%;
+}
+
 h2 {
   margin-top: 1em;
   padding-top: 1em;
