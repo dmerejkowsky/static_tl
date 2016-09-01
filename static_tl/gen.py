@@ -61,10 +61,10 @@ def fix_tweet_text(tweet):
 
     # currently we just rewrite all URLs, so that we don't hit
     # http://t.co ..
-    fix_urls(tweet) # need to do this first because we need the indices
+    replace_t_co_urls(tweet) # need to do this first because we need the indices
 
 
-def fix_urls(tweet):
+def replace_t_co_urls(tweet):
     """ Replace all the http://t.co URL with their real value """
     orig = tweet["fixed_text"]
     to_do = dict()
