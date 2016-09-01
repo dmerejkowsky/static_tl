@@ -70,7 +70,8 @@ def fix_urls(tweet):
     to_do = dict()
     for url in tweet["entities"]["urls"]:
         expanded_url = url["expanded_url"]
-        replacement_str = '<a href="{0}">{0}</a>'.format(expanded_url)
+        display_url = url["display_url"]
+        replacement_str = '<a href="{0}">{1}</a>'.format(expanded_url, display_url)
         start, end = url["indices"]
         to_do[start] = (end, replacement_str)
     new_str = ""
