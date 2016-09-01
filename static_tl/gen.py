@@ -68,11 +68,21 @@ def replace_t_co_urls(tweet):
     """ Replace all the http://t.co URL with their real value """
     orig = tweet["fixed_text"]
     to_do = dict()
+    entities = tweet["entities"]
+    urls = entities.get("urls", list())
     for url in tweet["entities"]["urls"]:
         expanded_url = url["expanded_url"]
         display_url = url["display_url"]
         replacement_str = '<a href="{0}">{1}</a>'.format(expanded_url, display_url)
         start, end = url["indices"]
+        to_do[start] = (end, replacement_str)
+    media_list = entities.get("media", list())
+    for media in media_list:
+        media_type = media["type"]
+        media_url_https = media["media_url_https"]
+        if media_type == "photo":
+            replacement_str = '<br/><img src="{0}"/>'.format(media_url_https)
+        start, end = media["indices"]
         to_do[start] = (end, replacement_str)
     new_str = ""
     i = 0
