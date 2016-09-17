@@ -20,7 +20,6 @@ def get_db():
 app = flask.Flask(__name__)
 
 if APPLICATION_ROOT:
-    print("setting APPLICATION_ROOT to", APPLICATION_ROOT)
     app.config["APPLICATION_ROOT"] = APPLICATION_ROOT
 
 STATIC_TL_CONF = static_tl.config.get_config()
