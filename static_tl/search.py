@@ -46,7 +46,7 @@ SELECT name FROM sqlite_master WHERE TYPE='table' ORDER BY name
 @app.route("/search/<user>")
 def search(user):
     db = get_db()
-    users = db.get_users()
+    users = get_users(db)
     if user not in users:
         flask.abort(404)
     pattern = flask.request.args.get("pattern")
