@@ -46,6 +46,9 @@ SELECT name FROM sqlite_master WHERE TYPE='table' ORDER BY name
 @app.route("/search/<user>")
 def search(user):
     db = get_db()
+    users = db.get_users()
+    if user not in users:
+        flask.abort(404)
     pattern = flask.request.args.get("pattern")
     search_url = flask.url_for("search",  user=user)
     if pattern:
@@ -53,10 +56,7 @@ def search(user):
         cursor = db.cursor()
         query = "SELECT twitter_id, text, date FROM {user} WHERE text MATCH ?"
         query = query.format(user=user)
-        try:
-            cursor.execute(query, (pattern,))
-        except sqlite3.OperationalError:
-            flask.flash("No such user")
+        cursor.execute(query, (pattern,))
         def yield_tweets():
             for row in cursor.fetchall():
                 yield Tweet(*row)
