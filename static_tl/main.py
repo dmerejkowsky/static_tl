@@ -12,7 +12,7 @@ import argparse
 import cgitb
 import os
 
-from static_tl.get_tweets import main as main_get
+from static_tl.get import main as main_get
 from static_tl.gen import main as main_gen
 
 def main():
