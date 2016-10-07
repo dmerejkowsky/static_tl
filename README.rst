@@ -4,8 +4,8 @@ static_tl
 .. image:: http://img.shields.io/pypi/v/static_tl.svg
   :target: https://pypi.python.org/pypi/static_tl
 
-What is it?
------------
+What is it
+----------
 
 It' a tool that makes sure your TL won't be gone for ever if for some
 reason twitter decides to no longer play nice.
@@ -22,8 +22,8 @@ Here's an example of ``static_tl`` in action:
 
 `http://dmerej.info/tweets <http://dmerej.info/tweets>`_
 
-How to use it ?
----------------
+How to use it
+-------------
 
 * Install Python3 and then install ``static_tl`` with ``pip``
 
