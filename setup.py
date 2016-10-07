@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(name="static_tl",
-      version="0.4.1",
+      version="0.5",
       description="Generate a static HTML website from your twitter time line",
       url="https://github.com/dmerejkowsy/static_tl",
       author="Dimitri Merejkowsky",
