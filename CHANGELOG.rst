@@ -1,3 +1,8 @@
+v0.5.1 - 2016-10-07
+-------------------
+
+* Packaging changes for Pypi
+
 v0.5 - 2016-10-07
 ------------------
 
@@ -6,7 +11,6 @@ v0.5 - 2016-10-07
 
 v0.4.1 - 2016-09-17
 -------------------
-
 
 * search: return 404 early if the user does not exist
   (this fixes a potential SQL injection)
