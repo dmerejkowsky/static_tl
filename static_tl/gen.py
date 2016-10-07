@@ -149,7 +149,10 @@ def gen_user_pages(user_data, site_url=None):
         page["metadata"] = metadata
         all_pages.append(page)
     gen_user_index(user_data, all_pages, site_url=site_url)
-    gen_user_feed(user_data, site_url=site_url)
+    if site_url:
+        gen_user_feed(user_data, site_url=site_url)
+    else:
+        print("Warinng: site_url not set, not generating any feed")
 
 
 def gen_index(user_names=None, site_url=None):
