@@ -1,5 +1,5 @@
-Unrelased
----------
+v0.5.3 - 2016-10-07
+-------------------
 
 * Fix crash when ``site_url`` is not set
 
