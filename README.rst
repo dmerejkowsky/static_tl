@@ -75,13 +75,18 @@ files:
 you want so it's extremely easy to publish your new TL on the web)
 
 
-Permalinks
-----------
+Permalinks and feeds
+---------------------
 
 If you want to generate permalinks, simply add ``site_url`` at the
 top of the ``.toml`` file::
 
     site_url = http://example.com/tweets
+
+
+By doing so, ``static-tl gen`` will also generate a ``<user>/feed.atom`` feed
+so that people can be notified about your new tweets via RSS instead of having
+to create an account on twitter :)
 
 Tweaking the output
 --------------------
