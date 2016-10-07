@@ -25,13 +25,14 @@ def is_reply(tweet):
             tweet.get("in_reply_to_status_id")
 
 
-def filter_tweets(user, tweets):
+def filter_tweets(user_data, tweets):
     """ Return a generator filtering tweets the user does not
     want to keep
 
     """
+    user_name = user_data["screen_name"]
     config = static_tl.config.get_config()
-    user_config = config["users"][0][user]
+    user_config = config["users"][0][user_name]
     with_replies = user_config.get("with_replies", False)
 
     if with_replies:
@@ -108,61 +109,62 @@ def gen_from_template(out, template_name, context):
         fp.write(to_write)
 
 
-def gen_user_page(user, tweets, metadata):
+def gen_user_page(user_data, tweets, metadata):
+    user_name = user_data["screen_name"]
     context = metadata
     month_number =  metadata["month"]
     context["month_name"] = get_month_name(month_number)
     page_name = "%s-%s.html" % (metadata["year"], month_number)
-    out = "html/%s/%s" % (user, page_name)
-    tweets = filter_tweets(user, tweets)
+    out = "html/%s/%s" % (user_name, page_name)
+    tweets = filter_tweets(user_data, tweets)
     fix_tweets(tweets)
     context["tweets"] = tweets
-    context["user"] = user
+    context["user"] = user_data
     gen_from_template(out, "by_month.html", context)
     return page_name
 
 
-def gen_user_index(user, all_pages, site_url=None):
-    out = "html/%s/index.html" % user
+def gen_user_index(user_data, all_pages, site_url=None):
+    user_name = user_data["screen_name"]
+    out = "html/%s/index.html" % user_name
     context = dict()
     context["pages"] = all_pages
-    context["user"] = user
+    context["user"] = user_data
     context["site_url"] = site_url
     gen_from_template(out, "user_index.html", context)
     return out
 
 
-def gen_user_pages(user, site_url=None):
-    output_dir = os.path.join("html", user)
-    try:
-        os.makedirs(output_dir)
-    except FileExistsError:
-        pass
+def gen_user_pages(user_data, site_url=None):
+    user_name = user_data["screen_name"]
+    output_dir = os.path.join("html", user_name)
+    os.makedirs(output_dir, exist_ok=True)
 
     all_pages = list()
-    for tweets, metadata in static_tl.storage.get_tweets(user):
+    for tweets, metadata in static_tl.storage.get_tweets(user_name):
         metadata["site_url"] = site_url
-        page_name = gen_user_page(user, tweets, metadata)
+        page_name = gen_user_page(user_data, tweets, metadata)
         page = dict()
         page["href"] = page_name
         page["metadata"] = metadata
         all_pages.append(page)
-    gen_user_index(user, all_pages, site_url=site_url)
-    gen_user_feed(user, site_url=site_url)
+    gen_user_index(user_data, all_pages, site_url=site_url)
+    gen_user_feed(user_data, site_url=site_url)
 
 
-def gen_index(users=None, site_url=None):
+def gen_index(user_names=None, site_url=None):
     output = os.path.join("html", "index.html")
     gen_from_template(output, "index.html",
-            {"users" : users, "site_url": site_url})
+            {"user_names" : user_names, "site_url": site_url})
 
 
-def gen_user_feed(user, site_url=None, max_entries=100):
-    output = "html/%s/feed.atom" % user
+def gen_user_feed(user_data, site_url=None, max_entries=100):
+    user_name = user_data["screen_name"]
+    output = "html/%s/feed.atom" % user_name
     print("Generating", output)
-    title = "Tweets from %s" % user
+    title = "Tweets from %s" % user_name
     description = title
-    feed_self_url = "%s/%s.atom" % (site_url, user)
+    feed_self_url = "%s/%s.atom" % (site_url, user_name)
     feed_generator = feedgenerator.Atom1Feed(
             title=title,
             description=description,
@@ -170,8 +172,8 @@ def gen_user_feed(user, site_url=None, max_entries=100):
             feed_url=feed_self_url)
 
     n = 0
-    for tweets, metadata in static_tl.storage.get_tweets(user):
-        tweets = filter_tweets(user, tweets)
+    for tweets, metadata in static_tl.storage.get_tweets(user_name):
+        tweets = filter_tweets(user_data, tweets)
         year = metadata["year"]
         month = metadata["month"]
         index = len(tweets)
@@ -182,8 +184,8 @@ def gen_user_feed(user, site_url=None, max_entries=100):
             fix_tweet_text(tweet)
             date = arrow.get(tweet["timestamp"])
             permalink = "%s/%s/%s-%s.html#%i" % (
-                    site_url, user, year, month, index)
-            entry_id = "%s %s/%s #%i" % (user, year, month, index)
+                    site_url, user_name, year, month, index)
+            entry_id = "%s %s/%s #%i" % (user_name, year, month, index)
             description = tweet["fixed_text"]
             description = "<pre>%s</pre>" % description
             feed_generator.add_item(
@@ -213,15 +215,16 @@ def copy_static():
 
 
 
-def updatedb(user):
+def updatedb(user_data):
+    user_name = user_data["screen_name"]
     db_path = "tweets.sqlite"
-    print("Updating database for", user, "...", end=" ", flush=True)
+    print("Updating database for", user_name, "...", end=" ", flush=True)
     db = sqlite3.connect(db_path)
 
     sql = """\
-DROP TABLE IF EXISTS {user};
+DROP TABLE IF EXISTS {user_name};
 
-CREATE VIRTUAL TABLE {user} USING fts4(
+CREATE VIRTUAL TABLE {user_name} USING fts4(
                      twitter_id INTEGER NOT NULL,
                      text VARCHAR(500) NOT NULL,
                      date VARCHAR(30),
@@ -229,19 +232,19 @@ CREATE VIRTUAL TABLE {user} USING fts4(
 
 
 """
-    db.executescript(sql.format(user=user))
+    db.executescript(sql.format(user_name=user_name))
     db.commit()
 
     def yield_tweets():
-        for tweets, metadata in static_tl.storage.get_tweets(user):
-            tweets = filter_tweets(user, tweets)
+        for tweets, metadata in static_tl.storage.get_tweets(user_name):
+            tweets = filter_tweets(user_data, tweets)
             fix_tweets(tweets)
             for tweet in tweets:
                 fix_tweet_text(tweet)
                 yield tweet["id"], tweet["fixed_text"], tweet["date"]
 
-    sql = "INSERT INTO {user} (twitter_id, text, date) VALUES (?, ?, ?)"
-    sql = sql.format(user=user)
+    sql = "INSERT INTO {user_name} (twitter_id, text, date) VALUES (?, ?, ?)"
+    sql = sql.format(user_name=user_name)
     db.executemany(sql, yield_tweets())
     db.commit()
     db.close()
@@ -255,13 +258,16 @@ def main():
         print("Warinng: site_url not set, permalinks won't work")
     copy_static()
     user_config = config["users"][0]
-    published_users = [x for x in user_config
+    published_user_names = [x for x in user_config
                        if user_config[x].get("publish", True)]
-    for user in sorted(published_users):
-        gen_user_pages(user, site_url=site_url)
-    gen_index(users=published_users, site_url=site_url)
-    for user in user_config:
-        updatedb(user)
+    published_user_names.sort()
+    for user_name in published_user_names:
+        user_data = static_tl.storage.get_user_data(user_name)
+        gen_user_pages(user_data, site_url=site_url)
+    gen_index(user_names=published_user_names, site_url=site_url)
+    for user_name in user_config:
+        user_data = static_tl.storage.get_user_data(user_name)
+        updatedb(user_data)
 
 
 if __name__ == "__main__":

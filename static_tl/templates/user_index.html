@@ -2,16 +2,30 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>All tweets from {{ user }}</title>
+  <title>All tweets from {{ user.screen_name }}</title>
   <link rel="alternate" type="application/atom+xml" title="tweets feeds" href="feed.atom" />
 </head>
 
 <body>
-  <h1>Tweets from {{ user }}</h1>
+  <h1>
+    Tweets from {{ user.screen_name }}
+
+    <a href="feed.atom">
+      <img alt="atom icon" src="../static/feed-icon.png"/>
+    </a>
+  </h1>
+
+  <p>
+  {{ user.name }} from {{ user.location }}
+  </p>
+
+  <p>
+    {{ user.description }}
+  </p>
 
 {% if site_url %}
   <p>
-    <a href="{{ site_url }}/search/{{ user }}">Search</a>
+    <a href="{{ site_url }}/search/{{ user.screen_name }}">Search</a>
   </p>
 {% endif %}
 
@@ -23,14 +37,6 @@
   </li>
   {% endfor %}
   </ul>
-
-  <p>
-    Subscribe:
-    <a href="feed.atom">
-      <img alt="atom icon" src="../static/feed-icon.png"/>
-    </a>
-  </p>
-
 
   <p>
     <a href="../index.html">back</a>

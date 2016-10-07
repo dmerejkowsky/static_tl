@@ -12,6 +12,7 @@ JSON_FILENAME_RE = re.compile(r"""
     \.json                   # Extension
 """, re.VERBOSE)
 
+
 def get_tweets(user):
     """ Get tweets from the .json files retrieved with get_tweets.py
 
@@ -23,6 +24,7 @@ def get_tweets(user):
         with open(json_file, "r") as fp:
             tweets = json.load(fp)
             yield(tweets, metadata)
+
 
 def get_last_id(user):
     """ Retrieve last stored tweet id for the given user """
@@ -50,3 +52,11 @@ def get_json_files(user):
         if match:
             full_path = os.path.join(json_dir, filename)
             yield (full_path, match.groupdict())
+
+
+
+def get_user_data(name):
+    """ Retrieve data about given user """
+    json_path = os.path.join("json", name + ".json")
+    with open(json_path, "r") as fp:
+        return json.load(fp)

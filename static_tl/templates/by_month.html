@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{{ user }} - Tweets from {{month_name}} {{year}} </title>
+  <title>{{ user.screen_name }} - Tweets from {{month_name}} {{year}} </title>
 </head>
 
 
@@ -21,14 +21,14 @@
        (Note: need to keep that on one line, otherwise we got horizontal lines in the
        final HTML)
     #}
-    <a href="http://twitter.com/{{ user }}/status/{{ tweet.id }}"><img alt="twitter logo" src="../static/twitter-logo.png"/></a>
+    <a href="http://twitter.com/{{ user.screen_name }}/status/{{ tweet.id }}"><img alt="twitter logo" src="../static/twitter-logo.png"/></a>
 
     {# Rest of the h2 title is the tweet date #}
     {{ tweet.date }}
 
     {# If site_url is set, generate a permalink with a ¶ symbol #}
     {% if site_url %}
-    <a href="{{ site_url }}/{{ user }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
+    <a href="{{ site_url }}/{{ user.screen_name }}/{{ year }}-{{ month }}.html#{{ loop.revindex }}">
     ¶
     </a>
     {% endif %}
