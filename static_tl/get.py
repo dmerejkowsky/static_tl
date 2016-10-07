@@ -64,7 +64,7 @@ def group_tweets_by_date(tweets):
     return itertools.groupby(tweets, key=date_key)
 
 
-def dump(user, tweets):
+def dump_tweets(user, tweets):
     """ Dump retrieved tweets for the given user
 
     Return number of tweets written
@@ -89,6 +89,16 @@ def dump(user, tweets):
             print("Tweets written to", output)
     return n
 
+
+def dump_user_data(user, data):
+    """ Dump retrieved information about user """
+    output_dir = "json"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, user + ".json")
+    with open(output_path, "w") as fp:
+        json.dump(data, fp, indent=2)
+
+
 def main():
     config = static_tl.config.get_config()
     auth_dict = config["auth"]
@@ -99,10 +109,14 @@ def main():
     api = twitter.Twitter(auth=auth)
     users = sorted(config["users"][0].keys())
     for user in users:
+        print("Getting user info for", user)
+        data = api.users.show(screen_name=user)
+        dump_user_data(user, data)
+
         print("Getting tweets from", user)
         last_id = static_tl.storage.get_last_id(user)
         new_tweets = get_new_tweets(user, api, last_id=last_id)
-        n_tweets = dump(user, new_tweets)
+        n_tweets = dump_tweets(user, new_tweets)
         if n_tweets:
             print("Written %i new tweets" % n_tweets)
         else:
