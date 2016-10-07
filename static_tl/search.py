@@ -1,4 +1,5 @@
 import collections
+import itertools
 import os
 import sqlite3
 
@@ -52,16 +53,22 @@ def search(user):
     pattern = flask.request.args.get("pattern")
     search_url = flask.url_for("search",  user=user)
     if pattern:
-        pattern = "%" + pattern + "%"
+        full_pattern = "%" + pattern + "%"
         cursor = db.cursor()
         query = "SELECT twitter_id, text, date FROM {user} WHERE text MATCH ?"
         query = query.format(user=user)
-        cursor.execute(query, (pattern,))
+        cursor.execute(query, (full_pattern,))
         def yield_tweets():
             for row in cursor.fetchall():
                 yield Tweet(*row)
-        return flask.render_template("search_results.html", tweets=yield_tweets(),
-                                     user=user, search_url=search_url)
+        max_count = 100
+        returned_tweets = list(itertools.islice(yield_tweets(), max_count))
+        if len(returned_tweets) == max_count:
+            flask.flash("Your search yielded more than %d results" % max_count)
+        if not returned_tweets:
+            flask.flash("No results found for '%s'" % pattern)
+        return flask.render_template("search_results.html", tweets=returned_tweets,
+                                     user=user, search_url=search_url, pattern=pattern)
     else:
         site_url = STATIC_TL_CONF.get("site_url")
         return flask.render_template("search.html", user=user,

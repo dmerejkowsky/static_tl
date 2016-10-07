@@ -1,3 +1,12 @@
+Unrelased
+---------
+
+* Nicer search:
+
+  * Limit number of search results
+  * Display pattern in results page
+  * Display an error when nothing is found
+
 v0.5.1 - 2016-10-07
 -------------------
 
