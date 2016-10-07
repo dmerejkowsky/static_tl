@@ -71,10 +71,7 @@ def dump(user, tweets):
     """
     n = 0
     output_dir = "json/%s" % user
-    try:
-        os.makedirs(output_dir)
-    except FileExistsError:
-        pass
+    os.makedirs(output_dir, exist_ok=True)
     by_date = group_tweets_by_date(tweets)
     for (year, month), tweets in by_date:
         tweets = list(tweets)
