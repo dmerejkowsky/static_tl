@@ -20,7 +20,7 @@ Show me!
 
 Here's an example of ``static_tl`` in action:
 
-`http://dmerej.info/tweets <http://dmerej.info/tweets>`_
+`https://dmerej.info/tweets <https://dmerej.info/tweets>`_
 
 How to use it
 -------------
